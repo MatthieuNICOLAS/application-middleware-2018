@@ -1,0 +1,110 @@
+\documentclass{article}
+
+    \usepackage[T1]{fontenc}
+    \usepackage{ucs}
+    \usepackage[utf8]{inputenc}
+
+    \usepackage{acronym} % \ac[p], \acl[p], \acs[p], \acf[p]
+    \usepackage{authblk} % \affil
+    \usepackage[margin=1in]{geometry}
+    \usepackage{subcaption}
+    \captionsetup{subrefformat=parens}
+
+    \usepackage{graphicx}
+    \usepackage{color}
+    \AtBeginDocument{
+    \definecolor{pdfurlcolor}{rgb}{0,0,0}
+    \definecolor{pdfcitecolor}{rgb}{0,0,0}
+    \definecolor{pdflinkcolor}{rgb}{0,0,0}
+    \definecolor{light}{gray}{.85}
+    \definecolor{vlight}{gray}{.95}
+    \definecolor{darkgreen}{rgb}{0.0, 0.2, 0.13}
+    }
+    \usepackage[colorlinks=true,
+                citecolor=pdfcitecolor,
+                urlcolor=pdfurlcolor,
+                linkcolor=pdflinkcolor,
+                pdfborder={0 0 0}
+                ]{hyperref}
+    \usepackage{url}
+    \urlstyle{rm}
+    \usepackage{paralist}
+    \usepackage{booktabs}
+
+    \usepackage[numbers]{natbib}
+
+    \newcommand{\email}[1]{\href{mailto:#1}{#1}}
+
+
+    % Acronyms
+    % --------
+    \acrodef{CRDT}[CRDT]{Conflict-free Replicated Data Type}
+    \acrodefplural{CRDT}[CRDTs]{Conflict-free Replicated Data Types}
+
+    % Meta-Data
+    % ---------
+    \title{Efficient (re)naming in \acp{CRDT}}
+    \author{Matthieu Nicolas \\ \email{matthieu.nicolas@inria.fr}}
+    \affil{Inria, F-54600,
+      Université de Lorraine, LORIA, F-54506,
+      CNRS, F-54506}
+    \date{}
+
+    \hypersetup{pdftitle={Efficient (re)naming in CRDT},
+      pdfsubject={},
+      pdfkeywords={Data replication, CRDT},
+      pdfauthor={M. Nicolas, O. Perrin, G. Oster}}
+
+    \pagestyle{empty}
+
+    \begin{document}
+
+    \maketitle
+
+    \begin{itemize}
+        \item Abstract (maximum of 100 words).
+        \item Clear statement of the identified research problem(s) and the context in which the problem(s) will be addressed.
+        \begin{itemize}
+            \item Distributed applications need to make a trade-off between availability and consistency
+            \item To ensure high availability, adopt the optimistic replication model paired with the eventual consistency model to replicate data
+            \item A conflict resolution mechanism is needed to solve concurrent updates
+            \item The \ac{CRDT} approach
+            \item To converge, some \acp{CRDT} attach identifiers to each each element of the data structure
+            \item Identifiers' size grows over time, decreasing application's performance
+            \item \acp{CRDT} representing replicable sequences are some of the ones suffering the identifiers' growth issue
+        \end{itemize}
+        \item Summary (with appropriate references) of the state-of-the-art related to the identified problem(s) along with a clear restatement of the “gap” relative to the research problem(s).
+        \begin{itemize}
+            \item A sequence represents a number of ordered values
+            \item Can insert or remove an element at a position
+            \item Several \acp{CRDT} allow to replicate sequences : Treedoc, Logoot, LogootSplit
+            \item To ensure convergence, attach an identifier to each inserted element
+            \item Identifiers allow to identify an element and order them
+            \item Thus identifiers have to comply to several constraints : globally unique, totally ordered and belong to dense set
+            \item Because of these constraints, grow quicker
+            \item In Core and Nebula, authors propose mechanism to rename identifiers to limit growing rate
+            \item Proposed mechanism requires consensus and to determine a "core" of stable and durable nodes
+            \item Want to address this issue in a fully distributed manner, without any kind of super-peers
+        \end{itemize}
+        \item Statement explaining the approach and results, according to PhD stage: state the intended approach including a summary of work accomplished to date (if any).
+        \begin{itemize}
+            \item Defined properties that renaming functions need to comply to (commutative with insert/delete, a rename can be undone, do not shuffle the order)
+            \item Designed corresponding functions
+            \item Designed a new version of LogootSplit integrating them
+        \end{itemize}
+        \item Description of evaluation : describe the evaluation plan including intended metrics (quantitative and/or qualitative).
+        \begin{itemize}
+            \item Implementing this new \ac{CRDT} into MUTE
+            \item Testing it in every scenario we were able to think of
+            \item Need to prove the correctness of these renaming functions
+            \item Taking a look to model checking and automatic theorem provers
+            \item In parallel, designing a benchmark for collaborative editing tools (NOTE: mauvais terme ?)
+            \item Goal is be able to replay a collaborative editing session from its logs using different conflicts resolution mechanisms
+            \item Intend to ensure that the implementation is correct
+            \item Intend to mesure the performances (memory, cpu usage and bandwith usage, time to integrate an update, time required to converge)
+        \end{itemize}
+        \item Conclusion: that includes a statement of the real or potential impact(s) of solving the identified research problem(s). Finishers especially should include a brief conjecture about future work that builds on the PhD research.
+        \item Acknowledgements that properly recognize others’ contributions to the work (supervisor(s), other graduate students, funding sources, etc.).
+    \end{itemize}
+
+\end{document}
