@@ -138,7 +138,7 @@ Two operations are usually defined to update the sequence:
 \emph{insert(index, element)} adds the \emph{element} at the given \emph{index}
 whereas \emph{delete(index)} removes the element at the given \emph{index}.
 
-This data structure is often used in applications and, over the years, several \acp{CRDT} were proposed to represent replicable \gonote{or replicated?} sequences. % replicated sequences ???
+This data structure is often used in applications and, over the years, several \acp{CRDT} \cite{shapiro:inria-00177693, WeissICDCS09, AndreCollaborateCom2013} were proposed to represent replicable \gonote{or replicated?} sequences. % replicated sequences ???
 To ensure convergence, these data structures attach an identifier to each inserted element.
 These identifiers are used to achieve transaction-less and commutative updates by uniquely identifying each element and ordering them relatively to each others.
 
@@ -232,7 +232,7 @@ We intend to mesure common metrics like the memory and CPU usage, bandwith consu
 % \section{Acknowledgements that properly recognize others’ contributions to the work (supervisor(s), other graduate students, funding sources, etc.).}
 
 \bibliographystyle{ACM-Reference-Format}
-\bibliography{ref} 
+\bibliography{ref}
 
 \mnnote{add references}
 
