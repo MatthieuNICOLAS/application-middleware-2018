@@ -1,15 +1,10 @@
-\documentclass{article}
+\documentclass[sigplan]{acmart}
 
 \usepackage[T1]{fontenc}
 \usepackage{ucs}
 \usepackage[utf8]{inputenc}
 
 \usepackage{acronym} % \ac[p], \acl[p], \acs[p], \acf[p]
-\usepackage{authblk} % \affil
-\usepackage[margin=1in]{geometry}
-\usepackage{subcaption}
-\captionsetup{subrefformat=parens}
-
 \usepackage{graphicx}
 \usepackage{color}
 \AtBeginDocument{
@@ -20,21 +15,26 @@
 \definecolor{vlight}{gray}{.95}
 \definecolor{darkgreen}{rgb}{0.0, 0.2, 0.13}
 }
-\usepackage[colorlinks=true,
-            citecolor=pdfcitecolor,
-            urlcolor=pdfurlcolor,
-            linkcolor=pdflinkcolor,
-            pdfborder={0 0 0}
-            ]{hyperref}
-\usepackage{url}
-\urlstyle{rm}
-\usepackage{paralist}
 \usepackage{booktabs}
 
-\usepackage[numbers]{natbib}
 
-\newcommand{\email}[1]{\href{mailto:#1}{#1}}
+\usepackage[draft,inline,nomargin,index]{fixme}
+\fxsetup{theme=colorsig,mode=multiuser,inlineface=\itshape,envface=\itshape}
+\FXRegisterAuthor{go}{ago}{Gerald}
+\FXRegisterAuthor{mn}{amn}{Matthieu}
 
+% Copyright
+\setcopyright{none}
+%\setcopyright{acmcopyright}
+%\setcopyright{acmlicensed}
+%\setcopyright{rightsretained}
+%\setcopyright{usgov}
+%\setcopyright{usgovmixed}
+%\setcopyright{cagov}
+%\setcopyright{cagovmixed}
+
+% DOI
+% \acmDOI{10.475/123_4}
 
 % Acronyms
 % --------
@@ -43,28 +43,35 @@
 
 % Meta-Data
 % ---------
-\title{Efficient (re)naming in \acp{CRDT}}
-\author{Matthieu Nicolas \\ \email{matthieu.nicolas@inria.fr}}
-\affil{Inria, F-54600,
-    Université de Lorraine, LORIA, F-54506,
-    CNRS, F-54506}
-\date{}
 
 \hypersetup{pdftitle={Efficient (re)naming in CRDT},
     pdfsubject={},
     pdfkeywords={Data replication, CRDT},
     pdfauthor={M. Nicolas, O. Perrin, G. Oster}}
 
-\pagestyle{empty}
+%\pagestyle{empty}
 
 \begin{document}
 
-\maketitle
+\title{Efficient (re)naming in \acp{CRDT}}
+\author{Matthieu Nicolas}
+\affiliation{%
+    \institution{Université de Lorraine, CNRS, Inria, LORIA}
+    \postcode{F-54500}
+    \country{France}
+}
+\email{matthieu.nicolas@inria.fr}
+
+\renewcommand{\shortauthors}{M. Nicolas}
 
 % \section{Abstract (maximum of 100 words).}
 \begin{abstract}
-    TODO: Write abstract
+   \mnnote{TODO: Write abstract}
 \end{abstract}
+
+\maketitle
+
+\section{Research Statement}
 % \section{Clear statement of the identified research problem(s) and the context in which the problem(s) will be addressed.}
 
 % \begin{itemize}
@@ -78,32 +85,33 @@
 % \end{itemize}
 
 In order to serve an ever-growing number of users and provide an increasing volume of data,
-large scale systems such as data stores or collaborative editing tools have to adopt a distributed architecture.
-However, as stated by the CAP theorem, such systems cannot ensure both strong consistency and high availability in case of network partitions.
-As a result, literature and companies increasingly adopt the optimistic replication model paired with the eventual consistency model to replicate data among nodes.
+large scale systems such as data stores or collaborative editing tools adopt a distributed and replicated architecture.
+However, as stated by the CAP theorem \cite{brewer_2000_podc}, such systems cannot ensure both strong consistency and high availability in presence of network partitions.
+As a result, literature and companies increasingly adopt an optimistic replication model \cite{saito_2005_optimistic-replication} paired with the eventual consistency model to replicate data among nodes.
 This consistency model allows replicas to temporarily diverge to be able to ensure high availability, even in case of network partition.
-Each node owns a copy of the data and can edit it, before propagating updates to others.
-A conflict resolution mechanism is however required to handle updates generated concurrently by different replicas.
+Each node owns a copy of the data and can modify it before propagating updates to others.
+A conflict resolution mechanism is however required to handle updates generated concurrently by different nodes.
 
-An approach, which gains in popularity since a few years, proposes to define \acfp{CRDT}.
-These data structures behave as traditional ones, like the \emph{Set} or \emph{Sequence} data structures, but are designed for a distributed usage.
+An approach, which gains in popularity since a few years, proposes to define \acfp{CRDT} \cite{shapiro_2011_crdt}.
+These data structures behave as traditional ones, such as the \emph{Set} or \emph{Sequence} data structures, but are designed for a distributed usage.
 Their specification ensures that concurrent updates are resolved deterministically, without requiring any kind of agreement, and that replicas eventually converge immediately after observing some set of updates,
-thus achieving \emph{Strong Eventual Consistency}.
+thus achieving \emph{Strong Eventual Consistency} \cite{shapiro_2011_crdt}.
 
-% TODO: Rework the following paragraph
+\mnnote{TODO: Rework the following paragraph}
 To achieve convergence, \acp{CRDT} proposed in the literature mostly rely on unique identifiers to reference updated elements.
-To generate such element identifiers, nodes often use their own identifier as well as a logical clock.
-Thus, regarding to how node identifiers are generated, the size of element identifiers usually increases with the number of nodes.
-Furthermore, element identifiers have to comply to additional constraints according to the \ac{CRDT}, for example forming a dense set in case of a \emph{Sequence} data structure.
-In this case, element identifiers' size also increases according to the updates performed on the data structure.
+To generate such element identifiers, nodes often use their own identifier combined with a logical clock.
+Thus, regarding how node identifiers are generated, the size of element identifiers usually increases with the number of nodes.
+Element identifiers have also to comply to additional constraints according to the \ac{CRDT}, for instance forming a dense set in the case of a \emph{Sequence} data structure.
+Consequently, the size of element identifiers also increases according to the number of updates performed on the data structure.
 Therefore, the size of element identifiers is usually not bounded.
 
 Since the size of identifiers attached to each element is not bounded, the overhead of the replicated data structure increases over time.
-Since nodes have to store and broadcast the identifiers, the application's performances and efficiency decrease over time.
-This impedes the adoption of concerned \acp{CRDT}.
+Since nodes have to store and broadcast these identifiers, the application's performances and efficiency decrease over time.
+This severly impedes the adoption of concerned \acp{CRDT}.
 
-We present an approach to address the issue of the growth of identifiers for a family of \acp{CRDT} suffering particularly from this issue : \emph{Sequence} \acp{CRDT}.
+In this thesis, we aim to address this issue of the growth of identifiers for a specific category of \acp{CRDT} suffering particularly from this issue:\emph{Sequence} \acp{CRDT}.
 
+\section{Related Work}
 % \section{Summary (with appropriate references) of the state-of-the-art related to the identified problem(s) along with a clear restatement of the “gap” relative to the research problem(s).}
 
 % NOTE: Aborder brièvement l'approche avec les tombstones ? WOOT, RGA, RGASplit ?
@@ -122,30 +130,34 @@ We present an approach to address the issue of the growth of identifiers for a f
 %     % \item Want to address this issue in a fully distributed manner, without any kind of super-peers
 % \end{itemize}
 
-The \emph{Sequence} data structure represents a numbered suite of values.
-Two operations are usually defined to update the sequence :
+The \emph{Sequence} data structure represents an ordered collection elements. %a numbered suite of values.
+\gonote{pour la petite blague, il semble qu'une sequence ne peut se modifier que par la tête ou la queue pas par le milieu (sinon c'est un array) ;)}
+
+
+Two operations are usually defined to update the sequence:
 \emph{insert(index, element)} adds the \emph{element} at the given \emph{index}
 whereas \emph{delete(index)} removes the element at the given \emph{index}.
 
-This data structure is often used in applications and, over the years, several \acp{CRDT} were proposed to represent replicable sequences.
+This data structure is often used in applications and, over the years, several \acp{CRDT} were proposed to represent replicable \gonote{or replicated?} sequences. % replicated sequences ???
 To ensure convergence, these data structures attach an identifier to each inserted element.
 These identifiers are used to achieve transaction-less and commutative updates by uniquely identifying each element and ordering them relatively to each others.
 
-The downside of this approach is the increasing size of the identifiers.
-Since the identifiers are used to order the elements, they have to form a dense set so that nodes are always able to insert a new element between two others.
+The downside of this approach is the increasing size of identifiers.
+Since identifiers are used to order elements, they have to form a dense set so that nodes are always able to insert a new element between two others.
 However, two identifiers of the same size can be contiguous.
-When inserting a new element between two such identifiers, we have no other choice than to increases the size of the generated identifier to be able to generate one respecting the intended order. This leads to a specification of identifiers which does not bound their size.
+When inserting a new element between two such identifiers, there is no other choice than to increase the size of the generated identifier to be able to generate one respecting the intended \gonote{expected?} order. This leads to a specification of identifiers which does not bound their size.
 
-To address the issue of evergrowing identifiers, several approaches were presented.
-In LSEQ, authors propose several strategies to generate identifiers and design a mechanism to switch between these strategies to limit the speed of the identifiers growth.
-In Core-Nebula, authors propose a renaming mechanism to reduce the size of currently used identifiers, based on a consensus algorithm.
-To prevent a system-wide consensus, they divide the system into two tiers : the \emph{Core}, a small set of controlled and stable nodes, and the \emph{Nebula}, an uncontrolled set of nodes.
-Both can perform updates but only the members \emph{Core} participate in the consensus leading to a rename, while a catch-up mechanism is provided for nodes from the \emph{Nebula} to transform the updates they performed concurrently to a renaming.
+Several approaches were proposed in the literature in order to address the issue of evergrowing identifiers.
+\citet{nedelec_2013_lseq} propose several strategies to generate identifiers and design a mechanism to switch between these strategies to limit the speed of the identifiers growth.
+\citet{leia:inria-00397981} propose a renaming mechanism to reduce the size of currently used identifiers, relying on a consensus algorithm.
+To prevent a system-wide consensus, authors divide the system into two tiers: the \emph{Core}, a small set of controlled and stable nodes, and the \emph{Nebula}, an uncontrolled set of nodes.
+Both can perform updates but only the members of the \emph{Core} participate in the consensus leading to a rename, while a catch-up mechanism is provided for nodes from the \emph{Nebula} to transform the updates they performed concurrently to a renaming.
 
-TODO: Ajouter une phrase sur le fait qu'effectuer un consensus est coûteux, surtout dans un système très dynamique, pour motiver la conception d'un mécanisme de renommage entièrement distribué
+\mnnote{TODO: Ajouter une phrase sur le fait qu'effectuer un consensus est coûteux, surtout dans un système très dynamique, pour motiver la conception d'un mécanisme de renommage entièrement distribué}
 
 In our approach, we propose a fully distributed renaming mechanism, allowing any node to perform a renaming without any kind of coordination with others.
 
+\section{Proposed Approach}
 % \section{Statement explaining the approach and results, according to PhD stage: state the intended approach including a summary of work accomplished to date (if any).}
 
 % \begin{itemize}
@@ -153,6 +165,9 @@ In our approach, we propose a fully distributed renaming mechanism, allowing any
 %     \item Designed corresponding functions
 %     \item Designed a new version of LogootSplit integrating them
 % \end{itemize}
+
+\gonote{ajouter quelques mots pour donner l'idée générale de l'approche proposée: renommage des identifiants}
+
 
 We define a new operation : \emph{rename}.
 This operation generates a new, equivalent state of the current sequence but with arbitrary, shorter identifiers.
@@ -176,6 +191,7 @@ To determine which \emph{rename} operation to proceed with, we define and use a 
 Based on this approach, we propose a new version of the LogootSplit algorithm implementing this renaming mechanism.
 We also introduce an optimisation to reduce the bandwidth consumption of the \emph{rename} operation by compressing the \emph{renamingMap}.
 
+\section{Ongoing Validation}
 % \section{Description of evaluation : describe the evaluation plan including intended metrics (quantitative and/or qualitative).}
 
 % \begin{itemize}
@@ -195,15 +211,16 @@ It is now in the process of being tested.
 However, testing does not ensure correctness.
 We are thus taking steps to provide a formal proof of the algorithm, either using a proof assistant either using a automatic theorem prover.
 
-TODO: Add introduction to explain that we need to assess the performance of the mechanism
+\mnnote{TODO: Add introduction to explain that we need to assess the performance of the mechanism}
 
 In parallel, we are designing a benchmarker for collaborative editing tools.
 The goal is be able to replay a collaborative editing session, from its logs, using different conflicts resolution mechanisms to compare their respective performances.
 We intend to mesure common metrics like the memory and CPU usage, bandwith consumption but also more specific metrics like the time to propagate and integrate an update and the global time required to converge.
 
+\section{Conclusion and Future Work}
 % \section{Conclusion: that includes a statement of the real or potential impact(s) of solving the identified research problem(s). Finishers especially should include a brief conjecture about future work that builds on the PhD research.}
 
-TODO: Write conclusion
+\mnnote{TODO: Write conclusion}
 
 % \begin{itemize}
 %     \item With renaming mechanism, bound the size of identifiers
@@ -213,5 +230,10 @@ TODO: Write conclusion
 % \end{itemize}
 
 % \section{Acknowledgements that properly recognize others’ contributions to the work (supervisor(s), other graduate students, funding sources, etc.).}
+
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{ref} 
+
+\mnnote{add references}
 
 \end{document}
