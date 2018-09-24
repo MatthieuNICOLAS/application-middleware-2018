@@ -61,11 +61,11 @@
 
 \maketitle
 
-\section{Abstract (maximum of 100 words).}
-
-TODO
-
-\section{Clear statement of the identified research problem(s) and the context in which the problem(s) will be addressed.}
+% \section{Abstract (maximum of 100 words).}
+\begin{abstract}
+    TODO: Write abstract
+\end{abstract}
+% \section{Clear statement of the identified research problem(s) and the context in which the problem(s) will be addressed.}
 
 % \begin{itemize}
 %     \item Distributed applications need to make a trade-off between availability and consistency
@@ -104,51 +104,49 @@ This impedes the adoption of concerned \acp{CRDT}.
 
 We present an approach to address the issue of the growth of identifiers for a family of \acp{CRDT} suffering particularly from this issue : \emph{Sequence} \acp{CRDT}.
 
-\section{Summary (with appropriate references) of the state-of-the-art related to the identified problem(s) along with a clear restatement of the “gap” relative to the research problem(s).}
+% \section{Summary (with appropriate references) of the state-of-the-art related to the identified problem(s) along with a clear restatement of the “gap” relative to the research problem(s).}
 
 % NOTE: Aborder brièvement l'approche avec les tombstones ? WOOT, RGA, RGASplit ?
 
-\begin{itemize}
-    % \item A sequence represents a number of ordered values
-    % \item Can insert or remove an element at a position
-    \item Several \acp{CRDT} allow to replicate sequences : Treedoc, Logoot, LogootSplit
-    \item To ensure convergence, attach an identifier to each inserted element
-    \item Identifiers allow to identify an element and order them
-    \item Thus identifiers have to comply to several constraints : globally unique, totally ordered and belong to dense set
-    \item Because of these constraints, grow quicker
-    % \item LSEQ
-    % \item In Core and Nebula, authors propose mechanism to rename identifiers to limit growing rate
-    % \item Proposed mechanism requires consensus and to determine a "core" of stable and durable nodes
-    % \item Want to address this issue in a fully distributed manner, without any kind of super-peers
-\end{itemize}
+% \begin{itemize}
+%     % \item A sequence represents a number of ordered values
+%     % \item Can insert or remove an element at a position
+%     \item Several \acp{CRDT} allow to replicate sequences : Treedoc, Logoot, LogootSplit
+%     \item To ensure convergence, attach an identifier to each inserted element
+%     \item Identifiers allow to identify an element and order them
+%     \item Thus identifiers have to comply to several constraints : globally unique, totally ordered and belong to dense set
+%     \item Because of these constraints, grow quicker
+%     % \item LSEQ
+%     % \item In Core and Nebula, authors propose mechanism to rename identifiers to limit growing rate
+%     % \item Proposed mechanism requires consensus and to determine a "core" of stable and durable nodes
+%     % \item Want to address this issue in a fully distributed manner, without any kind of super-peers
+% \end{itemize}
 
 The \emph{Sequence} data structure represents a numbered suite of values.
 Two operations are usually defined to update the sequence :
 \emph{insert(index, element)} adds the \emph{element} at the given \emph{index}
 whereas \emph{delete(index)} removes the element at the given \emph{index}.
 
-TODO: Introduce \emph{Sequence} \acp{CRDT}: Treedoc, Logoot, LogootSplit, ... \\
-Over the years, several \acp{CRDT} were proposed to represent replicable sequences.
-To ensure convergence, these \acp{CRDT} generate identifiers they attach to elements.
-These identifiers have several purposes : they uniquely identify each element, easing their later deletion.
-The identifiers must then be globally unique.
-The identifiers are also used to represent the positions of the elements.
-By comparing their respective identifiers, we are then able to order each element relatively to others.
-Identifiers must then be totally ordered.
-Finally, we should always be able to insert a new element between two others.
-It means that we should always be able to generate a new identifier between two others.
-Therefore the identifiers should belong to a dense set.
-This last property is usually address by designing identifiers of variable length.
+This data structure is often used in applications and, over the years, several \acp{CRDT} were proposed to represent replicable sequences.
+To ensure convergence, these data structures attach an identifier to each inserted element.
+These identifiers are used to achieve transaction-less and commutative updates by uniquely identifying each element and ordering them relatively to each others.
 
-To address the issue of evergrowing identifiers, several approaches were presented since then.
+The downside of this approach is the increasing size of the identifiers.
+Since the identifiers are used to order the elements, they have to form a dense set so that nodes are always able to insert a new element between two others.
+However, two identifiers of the same size can be contiguous.
+When inserting a new element between two such identifiers, we have no other choice than to increases the size of the generated identifier to be able to generate one respecting the intended order. This leads to a specification of identifiers which does not bound their size.
+
+To address the issue of evergrowing identifiers, several approaches were presented.
 In LSEQ, authors propose several strategies to generate identifiers and design a mechanism to switch between these strategies to limit the speed of the identifiers growth.
 In Core-Nebula, authors propose a renaming mechanism to reduce the size of currently used identifiers, based on a consensus algorithm.
 To prevent a system-wide consensus, they divide the system into two tiers : the \emph{Core}, a small set of controlled and stable nodes, and the \emph{Nebula}, an uncontrolled set of nodes.
-The \emph{Core} ... while a catch-up mechanism is provided for nodes from the \emph{Nebula} to transform the updates they performed concurrently to a renaming.
+Both can perform updates but only the members \emph{Core} participate in the consensus leading to a rename, while a catch-up mechanism is provided for nodes from the \emph{Nebula} to transform the updates they performed concurrently to a renaming.
+
+TODO: Ajouter une phrase sur le fait qu'effectuer un consensus est coûteux, surtout dans un système très dynamique, pour motiver la conception d'un mécanisme de renommage entièrement distribué
 
 In our approach, we propose a fully distributed renaming mechanism, allowing any node to perform a renaming without any kind of coordination with others.
 
-\section{Statement explaining the approach and results, according to PhD stage: state the intended approach including a summary of work accomplished to date (if any).}
+% \section{Statement explaining the approach and results, according to PhD stage: state the intended approach including a summary of work accomplished to date (if any).}
 
 % \begin{itemize}
 %     \item Defined properties that renaming functions need to comply to (commutative with insert/delete, a rename can be undone, do not shuffle the order)
@@ -167,17 +165,18 @@ Upon the reception of these concurrent updates, the node which triggered the ren
 Indeed, the identifiers having changed, performing the updates would not insert the elements at the correct positions nor delete the correct elements.
 
 To address this issue, we designed rewriting rules for concurrent operations to a \emph{rename}.
-By using the original identifier and the \emph{renamingMap}, we are able either to find the new corresponding identifier, if it has been renamed, either to deterministically generate a new identifier preserving the existing order, if it has been concurrently inserted.
+By using the original identifier and the \emph{renamingMap}, we are either able to find the new corresponding identifier, if it has been renamed, either able to deterministically generate a new identifier preserving the existing order, if it has been concurrently inserted.
 
-However, one update a node can perform and broadcast while another node is performing concurrently the renaming process is actually another \emph{rename}.
-We thus have to be able to deal with concurrent \emph{rename} operations.
-To solve this issue, we define a total order between \emph{rename} operations.
-TODO: Explain that we discard but one \emph{rename} operation. All "losing" operations are undone using additional rewriting rules which also generate new identifiers preserving the order for identifiers inserted after a renaming.
+However, one \emph{rename} operation can be concurrent to another one.
+To solve this scenario, we give priority to one operation over the others.
+Nodes which observed and applied one of the "losing" \emph{renaming} operations have to undo its effect before applying the "winning" one.
+Thus we designed additional rewriting rules which reverse the effect of a previously applied \emph{rename} while also generating new identifiers preserving the order for identifiers generated after the renaming.
+To determine which \emph{rename} operation to proceed with, we define and use a total order between \emph{rename} operations.
 
 Based on this approach, we propose a new version of the LogootSplit algorithm implementing this renaming mechanism.
 We also introduce an optimisation to reduce the bandwidth consumption of the \emph{rename} operation by compressing the \emph{renamingMap}.
 
-\section{Description of evaluation : describe the evaluation plan including intended metrics (quantitative and/or qualitative).}
+% \section{Description of evaluation : describe the evaluation plan including intended metrics (quantitative and/or qualitative).}
 
 % \begin{itemize}
 %     \item Implementing this new \ac{CRDT} into MUTE
@@ -196,19 +195,23 @@ It is now in the process of being tested.
 However, testing does not ensure correctness.
 We are thus taking steps to provide a formal proof of the algorithm, either using a proof assistant either using a automatic theorem prover.
 
-% TODO: Add introduction to explain that we need to assess the performance of the mechanism
+TODO: Add introduction to explain that we need to assess the performance of the mechanism
+
 In parallel, we are designing a benchmarker for collaborative editing tools.
 The goal is be able to replay a collaborative editing session, from its logs, using different conflicts resolution mechanisms to compare their respective performances.
 We intend to mesure common metrics like the memory and CPU usage, bandwith consumption but also more specific metrics like the time to propagate and integrate an update and the global time required to converge.
 
-\section{Conclusion: that includes a statement of the real or potential impact(s) of solving the identified research problem(s). Finishers especially should include a brief conjecture about future work that builds on the PhD research.}
+% \section{Conclusion: that includes a statement of the real or potential impact(s) of solving the identified research problem(s). Finishers especially should include a brief conjecture about future work that builds on the PhD research.}
 
-\begin{itemize}
-    \item With renaming mechanism, bound the size of identifiers
-    \item Allow new usages by products for which unbounded size is a no-go like distributed databases
-    \item Future works : propose new strategies to trigger the renaming process to achieve better performances
-    \item Future works : propose new strategies to pick which \emph{rename} operation wins
-\end{itemize}
+TODO: Write conclusion
 
-\section{Acknowledgements that properly recognize others’ contributions to the work (supervisor(s), other graduate students, funding sources, etc.).}
+% \begin{itemize}
+%     \item With renaming mechanism, bound the size of identifiers
+%     \item Allow new usages by products for which unbounded size is a no-go like distributed databases
+%     \item Future works : propose new strategies to trigger the renaming process to achieve better performances
+%     \item Future works : propose new strategies to pick which \emph{rename} operation wins
+% \end{itemize}
+
+% \section{Acknowledgements that properly recognize others’ contributions to the work (supervisor(s), other graduate students, funding sources, etc.).}
+
 \end{document}
