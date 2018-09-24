@@ -1,110 +1,214 @@
 \documentclass{article}
 
-    \usepackage[T1]{fontenc}
-    \usepackage{ucs}
-    \usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{ucs}
+\usepackage[utf8]{inputenc}
 
-    \usepackage{acronym} % \ac[p], \acl[p], \acs[p], \acf[p]
-    \usepackage{authblk} % \affil
-    \usepackage[margin=1in]{geometry}
-    \usepackage{subcaption}
-    \captionsetup{subrefformat=parens}
+\usepackage{acronym} % \ac[p], \acl[p], \acs[p], \acf[p]
+\usepackage{authblk} % \affil
+\usepackage[margin=1in]{geometry}
+\usepackage{subcaption}
+\captionsetup{subrefformat=parens}
 
-    \usepackage{graphicx}
-    \usepackage{color}
-    \AtBeginDocument{
-    \definecolor{pdfurlcolor}{rgb}{0,0,0}
-    \definecolor{pdfcitecolor}{rgb}{0,0,0}
-    \definecolor{pdflinkcolor}{rgb}{0,0,0}
-    \definecolor{light}{gray}{.85}
-    \definecolor{vlight}{gray}{.95}
-    \definecolor{darkgreen}{rgb}{0.0, 0.2, 0.13}
-    }
-    \usepackage[colorlinks=true,
-                citecolor=pdfcitecolor,
-                urlcolor=pdfurlcolor,
-                linkcolor=pdflinkcolor,
-                pdfborder={0 0 0}
-                ]{hyperref}
-    \usepackage{url}
-    \urlstyle{rm}
-    \usepackage{paralist}
-    \usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{color}
+\AtBeginDocument{
+\definecolor{pdfurlcolor}{rgb}{0,0,0}
+\definecolor{pdfcitecolor}{rgb}{0,0,0}
+\definecolor{pdflinkcolor}{rgb}{0,0,0}
+\definecolor{light}{gray}{.85}
+\definecolor{vlight}{gray}{.95}
+\definecolor{darkgreen}{rgb}{0.0, 0.2, 0.13}
+}
+\usepackage[colorlinks=true,
+            citecolor=pdfcitecolor,
+            urlcolor=pdfurlcolor,
+            linkcolor=pdflinkcolor,
+            pdfborder={0 0 0}
+            ]{hyperref}
+\usepackage{url}
+\urlstyle{rm}
+\usepackage{paralist}
+\usepackage{booktabs}
 
-    \usepackage[numbers]{natbib}
+\usepackage[numbers]{natbib}
 
-    \newcommand{\email}[1]{\href{mailto:#1}{#1}}
+\newcommand{\email}[1]{\href{mailto:#1}{#1}}
 
 
-    % Acronyms
-    % --------
-    \acrodef{CRDT}[CRDT]{Conflict-free Replicated Data Type}
-    \acrodefplural{CRDT}[CRDTs]{Conflict-free Replicated Data Types}
+% Acronyms
+% --------
+\acrodef{CRDT}[CRDT]{Conflict-free Replicated Data Type}
+\acrodefplural{CRDT}[CRDTs]{Conflict-free Replicated Data Types}
 
-    % Meta-Data
-    % ---------
-    \title{Efficient (re)naming in \acp{CRDT}}
-    \author{Matthieu Nicolas \\ \email{matthieu.nicolas@inria.fr}}
-    \affil{Inria, F-54600,
-      Université de Lorraine, LORIA, F-54506,
-      CNRS, F-54506}
-    \date{}
+% Meta-Data
+% ---------
+\title{Efficient (re)naming in \acp{CRDT}}
+\author{Matthieu Nicolas \\ \email{matthieu.nicolas@inria.fr}}
+\affil{Inria, F-54600,
+    Université de Lorraine, LORIA, F-54506,
+    CNRS, F-54506}
+\date{}
 
-    \hypersetup{pdftitle={Efficient (re)naming in CRDT},
-      pdfsubject={},
-      pdfkeywords={Data replication, CRDT},
-      pdfauthor={M. Nicolas, O. Perrin, G. Oster}}
+\hypersetup{pdftitle={Efficient (re)naming in CRDT},
+    pdfsubject={},
+    pdfkeywords={Data replication, CRDT},
+    pdfauthor={M. Nicolas, O. Perrin, G. Oster}}
 
-    \pagestyle{empty}
+\pagestyle{empty}
 
-    \begin{document}
+\begin{document}
 
-    \maketitle
+\maketitle
 
-    \begin{itemize}
-        \item Abstract (maximum of 100 words).
-        \item Clear statement of the identified research problem(s) and the context in which the problem(s) will be addressed.
-        \begin{itemize}
-            \item Distributed applications need to make a trade-off between availability and consistency
-            \item To ensure high availability, adopt the optimistic replication model paired with the eventual consistency model to replicate data
-            \item A conflict resolution mechanism is needed to solve concurrent updates
-            \item The \ac{CRDT} approach
-            \item To converge, some \acp{CRDT} attach identifiers to each each element of the data structure
-            \item Identifiers' size grows over time, decreasing application's performance
-            \item \acp{CRDT} representing replicable sequences are some of the ones suffering the identifiers' growth issue
-        \end{itemize}
-        \item Summary (with appropriate references) of the state-of-the-art related to the identified problem(s) along with a clear restatement of the “gap” relative to the research problem(s).
-        \begin{itemize}
-            \item A sequence represents a number of ordered values
-            \item Can insert or remove an element at a position
-            \item Several \acp{CRDT} allow to replicate sequences : Treedoc, Logoot, LogootSplit
-            \item To ensure convergence, attach an identifier to each inserted element
-            \item Identifiers allow to identify an element and order them
-            \item Thus identifiers have to comply to several constraints : globally unique, totally ordered and belong to dense set
-            \item Because of these constraints, grow quicker
-            \item In Core and Nebula, authors propose mechanism to rename identifiers to limit growing rate
-            \item Proposed mechanism requires consensus and to determine a "core" of stable and durable nodes
-            \item Want to address this issue in a fully distributed manner, without any kind of super-peers
-        \end{itemize}
-        \item Statement explaining the approach and results, according to PhD stage: state the intended approach including a summary of work accomplished to date (if any).
-        \begin{itemize}
-            \item Defined properties that renaming functions need to comply to (commutative with insert/delete, a rename can be undone, do not shuffle the order)
-            \item Designed corresponding functions
-            \item Designed a new version of LogootSplit integrating them
-        \end{itemize}
-        \item Description of evaluation : describe the evaluation plan including intended metrics (quantitative and/or qualitative).
-        \begin{itemize}
-            \item Implementing this new \ac{CRDT} into MUTE
-            \item Testing it in every scenario we were able to think of
-            \item Need to prove the correctness of these renaming functions
-            \item Taking a look to model checking and automatic theorem provers
-            \item In parallel, designing a benchmark for collaborative editing tools (NOTE: mauvais terme ?)
-            \item Goal is be able to replay a collaborative editing session from its logs using different conflicts resolution mechanisms
-            \item Intend to ensure that the implementation is correct
-            \item Intend to mesure the performances (memory, cpu usage and bandwith usage, time to integrate an update, time required to converge)
-        \end{itemize}
-        \item Conclusion: that includes a statement of the real or potential impact(s) of solving the identified research problem(s). Finishers especially should include a brief conjecture about future work that builds on the PhD research.
-        \item Acknowledgements that properly recognize others’ contributions to the work (supervisor(s), other graduate students, funding sources, etc.).
-    \end{itemize}
+\section{Abstract (maximum of 100 words).}
 
+TODO
+
+\section{Clear statement of the identified research problem(s) and the context in which the problem(s) will be addressed.}
+
+% \begin{itemize}
+%     \item Distributed applications need to make a trade-off between availability and consistency
+%     \item To ensure high availability, adopt the optimistic replication model paired with the eventual consistency model to replicate data
+%     \item A conflict resolution mechanism is needed to solve concurrent updates
+%     \item The \ac{CRDT} approach
+%     \item To converge, some \acp{CRDT} attach identifiers to each each element of the data structure
+%     \item Identifiers' size grows over time, decreasing application's performance
+%     \item \acp{CRDT} representing replicable sequences are some of the ones suffering the identifiers' growth issue
+% \end{itemize}
+
+In order to serve an ever-growing number of users and provide an increasing volume of data,
+large scale systems such as data stores or collaborative editing tools have to adopt a distributed architecture.
+However, as stated by the CAP theorem, such systems cannot ensure both strong consistency and high availability in case of network partitions.
+As a result, literature and companies increasingly adopt the optimistic replication model paired with the eventual consistency model to replicate data among nodes.
+This consistency model allows replicas to temporarily diverge to be able to ensure high availability, even in case of network partition.
+Each node owns a copy of the data and can edit it, before propagating updates to others.
+A conflict resolution mechanism is however required to handle updates generated concurrently by different replicas.
+
+An approach, which gains in popularity since a few years, proposes to define \acfp{CRDT}.
+These data structures behave as traditional ones, like the \emph{Set} or \emph{Sequence} data structures, but are designed for a distributed usage.
+Their specification ensures that concurrent updates are resolved deterministically, without requiring any kind of agreement, and that replicas eventually converge immediately after observing some set of updates,
+thus achieving \emph{Strong Eventual Consistency}.
+
+% TODO: Rework the following paragraph
+To achieve convergence, \acp{CRDT} proposed in the literature mostly rely on unique identifiers to reference updated elements.
+To generate such element identifiers, nodes often use their own identifier as well as a logical clock.
+Thus, regarding to how node identifiers are generated, the size of element identifiers usually increases with the number of nodes.
+Furthermore, element identifiers have to comply to additional constraints according to the \ac{CRDT}, for example forming a dense set in case of a \emph{Sequence} data structure.
+In this case, element identifiers' size also increases according to the updates performed on the data structure.
+Therefore, the size of element identifiers is usually not bounded.
+
+Since the size of identifiers attached to each element is not bounded, the overhead of the replicated data structure increases over time.
+Since nodes have to store and broadcast the identifiers, the application's performances and efficiency decrease over time.
+This impedes the adoption of concerned \acp{CRDT}.
+
+We present an approach to address the issue of the growth of identifiers for a family of \acp{CRDT} suffering particularly from this issue : \emph{Sequence} \acp{CRDT}.
+
+\section{Summary (with appropriate references) of the state-of-the-art related to the identified problem(s) along with a clear restatement of the “gap” relative to the research problem(s).}
+
+% NOTE: Aborder brièvement l'approche avec les tombstones ? WOOT, RGA, RGASplit ?
+
+\begin{itemize}
+    % \item A sequence represents a number of ordered values
+    % \item Can insert or remove an element at a position
+    \item Several \acp{CRDT} allow to replicate sequences : Treedoc, Logoot, LogootSplit
+    \item To ensure convergence, attach an identifier to each inserted element
+    \item Identifiers allow to identify an element and order them
+    \item Thus identifiers have to comply to several constraints : globally unique, totally ordered and belong to dense set
+    \item Because of these constraints, grow quicker
+    % \item LSEQ
+    % \item In Core and Nebula, authors propose mechanism to rename identifiers to limit growing rate
+    % \item Proposed mechanism requires consensus and to determine a "core" of stable and durable nodes
+    % \item Want to address this issue in a fully distributed manner, without any kind of super-peers
+\end{itemize}
+
+The \emph{Sequence} data structure represents a numbered suite of values.
+Two operations are usually defined to update the sequence :
+\emph{insert(index, element)} adds the \emph{element} at the given \emph{index}
+whereas \emph{delete(index)} removes the element at the given \emph{index}.
+
+TODO: Introduce \emph{Sequence} \acp{CRDT}: Treedoc, Logoot, LogootSplit, ... \\
+Over the years, several \acp{CRDT} were proposed to represent replicable sequences.
+To ensure convergence, these \acp{CRDT} generate identifiers they attach to elements.
+These identifiers have several purposes : they uniquely identify each element, easing their later deletion.
+The identifiers must then be globally unique.
+The identifiers are also used to represent the positions of the elements.
+By comparing their respective identifiers, we are then able to order each element relatively to others.
+Identifiers must then be totally ordered.
+Finally, we should always be able to insert a new element between two others.
+It means that we should always be able to generate a new identifier between two others.
+Therefore the identifiers should belong to a dense set.
+This last property is usually address by designing identifiers of variable length.
+
+To address the issue of evergrowing identifiers, several approaches were presented since then.
+In LSEQ, authors propose several strategies to generate identifiers and design a mechanism to switch between these strategies to limit the speed of the identifiers growth.
+In Core-Nebula, authors propose a renaming mechanism to reduce the size of currently used identifiers, based on a consensus algorithm.
+To prevent a system-wide consensus, they divide the system into two tiers : the \emph{Core}, a small set of controlled and stable nodes, and the \emph{Nebula}, an uncontrolled set of nodes.
+The \emph{Core} ... while a catch-up mechanism is provided for nodes from the \emph{Nebula} to transform the updates they performed concurrently to a renaming.
+
+In our approach, we propose a fully distributed renaming mechanism, allowing any node to perform a renaming without any kind of coordination with others.
+
+\section{Statement explaining the approach and results, according to PhD stage: state the intended approach including a summary of work accomplished to date (if any).}
+
+% \begin{itemize}
+%     \item Defined properties that renaming functions need to comply to (commutative with insert/delete, a rename can be undone, do not shuffle the order)
+%     \item Designed corresponding functions
+%     \item Designed a new version of LogootSplit integrating them
+% \end{itemize}
+
+We define a new operation : \emph{rename}.
+This operation generates a new, equivalent state of the current sequence but with arbitrary, shorter identifiers.
+A map, called \emph{renamingMap}, is also generated to link each identifier from the former sequence to the corresponding identifier in the new one.
+By propagating this map, other nodes are able to apply the same renaming to their own local copy.
+
+However, being a distributed system, nodes can perform updates and broadcast them while another node is performing concurrently the renaming process.
+
+Upon the reception of these concurrent updates, the node which triggered the renaming process cannot apply them to its copy.
+Indeed, the identifiers having changed, performing the updates would not insert the elements at the correct positions nor delete the correct elements.
+
+To address this issue, we designed rewriting rules for concurrent operations to a \emph{rename}.
+By using the original identifier and the \emph{renamingMap}, we are able either to find the new corresponding identifier, if it has been renamed, either to deterministically generate a new identifier preserving the existing order, if it has been concurrently inserted.
+
+However, one update a node can perform and broadcast while another node is performing concurrently the renaming process is actually another \emph{rename}.
+We thus have to be able to deal with concurrent \emph{rename} operations.
+To solve this issue, we define a total order between \emph{rename} operations.
+TODO: Explain that we discard but one \emph{rename} operation. All "losing" operations are undone using additional rewriting rules which also generate new identifiers preserving the order for identifiers inserted after a renaming.
+
+Based on this approach, we propose a new version of the LogootSplit algorithm implementing this renaming mechanism.
+We also introduce an optimisation to reduce the bandwidth consumption of the \emph{rename} operation by compressing the \emph{renamingMap}.
+
+\section{Description of evaluation : describe the evaluation plan including intended metrics (quantitative and/or qualitative).}
+
+% \begin{itemize}
+%     \item Implementing this new \ac{CRDT} into MUTE
+%     \item Testing it in every scenario we were able to think of
+%     \item Need to prove the correctness of these renaming functions
+%     \item Taking a look to model checking and automatic theorem provers
+%     \item In parallel, designing a benchmark for collaborative editing tools (NOTE: mauvais terme ?)
+%     \item Goal is be able to replay a collaborative editing session from its logs using different conflicts resolution mechanisms
+%     \item Intend to ensure that the implementation is correct
+%     \item Intend to mesure the performances (memory, cpu usage and bandwith usage, time to integrate an update, time required to converge)
+% \end{itemize}
+
+The designed renaming mechanism has been implemented in MUTE, the collaborative text editor developed by our research team.
+It is now in the process of being tested.
+
+However, testing does not ensure correctness.
+We are thus taking steps to provide a formal proof of the algorithm, either using a proof assistant either using a automatic theorem prover.
+
+% TODO: Add introduction to explain that we need to assess the performance of the mechanism
+In parallel, we are designing a benchmarker for collaborative editing tools.
+The goal is be able to replay a collaborative editing session, from its logs, using different conflicts resolution mechanisms to compare their respective performances.
+We intend to mesure common metrics like the memory and CPU usage, bandwith consumption but also more specific metrics like the time to propagate and integrate an update and the global time required to converge.
+
+\section{Conclusion: that includes a statement of the real or potential impact(s) of solving the identified research problem(s). Finishers especially should include a brief conjecture about future work that builds on the PhD research.}
+
+\begin{itemize}
+    \item With renaming mechanism, bound the size of identifiers
+    \item Allow new usages by products for which unbounded size is a no-go like distributed databases
+    \item Future works : propose new strategies to trigger the renaming process to achieve better performances
+    \item Future works : propose new strategies to pick which \emph{rename} operation wins
+\end{itemize}
+
+\section{Acknowledgements that properly recognize others’ contributions to the work (supervisor(s), other graduate students, funding sources, etc.).}
 \end{document}
