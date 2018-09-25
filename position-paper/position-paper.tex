@@ -226,6 +226,14 @@ We intend to mesure common metrics like the memory and CPU usage, bandwith consu
 
 \mnnote{TODO: Write conclusion}
 
+The proposed renaming mechanism allows us to set a bound to the size of the identifiers.
+By bounding the size of identifiers, we open new perspectives for the adoption of concerned \acp{CRDT} in system like distributed databases.
+
+Nonetheless, several aspects of the proposed renaming mechanism can be enhanced.
+The strategy used to determine when to trigger a renaming for example.
+New strategies could be proposed to achieve better performances, by keeping the size of identifiers low while preventing many \emph{rename} operations to be generated concurrently.
+The strategy used to determine which operation to apply in case of concurrent \emph{rename} operations could also be reworked. Smarter indicators than the total order between operations could be used to reduce the number of undo to perform globally and increase the overall performances.
+
 % \begin{itemize}
 %     \item With renaming mechanism, bound the size of identifiers
 %     \item Allow new usages by products for which unbounded size is a no-go like distributed databases
