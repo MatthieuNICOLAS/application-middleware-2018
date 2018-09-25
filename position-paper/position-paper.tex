@@ -93,7 +93,7 @@ Each node owns a copy of the data and can modify it before propagating updates t
 A conflict resolution mechanism is however required to handle updates generated concurrently by different nodes.
 
 An approach, which gains in popularity since a few years, proposes to define \acfp{CRDT} \cite{shapiro_2011_crdt}.
-These data structures behave as traditional ones, such as the \emph{Set} or \emph{Sequence} data structures, but are designed for a distributed usage.
+These data types behave as traditional ones, such as the \emph{Set} or \emph{Sequence} data type, but are designed for a distributed usage.
 Their specification ensures that concurrent updates are resolved deterministically, without requiring any kind of agreement, and that replicas eventually converge immediately after observing some set of updates,
 thus achieving \emph{Strong Eventual Consistency} \cite{shapiro_2011_crdt}.
 
@@ -101,7 +101,7 @@ thus achieving \emph{Strong Eventual Consistency} \cite{shapiro_2011_crdt}.
 To achieve convergence, \acp{CRDT} proposed in the literature mostly rely on unique identifiers to reference updated elements.
 To generate such element identifiers, nodes often use their own identifier combined with a logical clock.
 Thus, regarding how node identifiers are generated, the size of element identifiers usually increases with the number of nodes.
-Element identifiers have also to comply to additional constraints according to the \ac{CRDT}, for instance forming a dense set in the case of a \emph{Sequence} data structure.
+Element identifiers have also to comply to additional constraints according to the \ac{CRDT}, for instance forming a dense set in the case of a \emph{Sequence} data type.
 Consequently, the size of element identifiers also increases according to the number of updates performed on the data structure.
 Therefore, the size of element identifiers is usually not bounded.
 
@@ -130,7 +130,7 @@ In this thesis, we aim to address this issue of the growth of identifiers for a 
 %     % \item Want to address this issue in a fully distributed manner, without any kind of super-peers
 % \end{itemize}
 
-The \emph{Sequence} data structure represents an ordered collection elements. %a numbered suite of values.
+The \emph{Sequence} data type represents an ordered collection elements. %a numbered suite of values.
 \gonote{pour la petite blague, il semble qu'une sequence ne peut se modifier que par la tête ou la queue pas par le milieu (sinon c'est un array) ;)}
 
 
@@ -138,7 +138,7 @@ Two operations are usually defined to update the sequence:
 \emph{insert(index, element)} adds the \emph{element} at the given \emph{index}
 whereas \emph{delete(index)} removes the element at the given \emph{index}.
 
-This data structure is often used in applications and, over the years, several \acp{CRDT} \cite{shapiro:inria-00177693, WeissICDCS09, AndreCollaborateCom2013} were proposed to represent replicable \gonote{or replicated?} sequences. % replicated sequences ???
+This data type is often used in applications and, over the years, several \acp{CRDT} \cite{shapiro:inria-00177693, WeissICDCS09, AndreCollaborateCom2013} were proposed to represent replicated sequences.
 To ensure convergence, these data structures attach an identifier to each inserted element.
 These identifiers are used to achieve transaction-less and commutative updates by uniquely identifying each element and ordering them relatively to each others.
 
@@ -151,11 +151,11 @@ Several approaches were proposed in the literature in order to address the issue
 \citet{nedelec_2013_lseq} propose several strategies to generate identifiers and design a mechanism to switch between these strategies to limit the speed of the identifiers growth.
 \citet{leia:inria-00397981} propose a renaming mechanism to reduce the size of currently used identifiers, relying on a consensus algorithm.
 To prevent a system-wide consensus, authors divide the system into two tiers: the \emph{Core}, a small set of controlled and stable nodes, and the \emph{Nebula}, an uncontrolled set of nodes.
-Both can perform updates but only the members of the \emph{Core} participate in the consensus leading to a rename, while a catch-up mechanism is provided for nodes from the \emph{Nebula} to transform the updates they performed concurrently to a renaming.
+Both can perform updates but only the members of the \emph{Core} participate in the consensus leading to a rename.
+A catch-up mechanism is provided for the \emph{Nebula} to transform the updates performed concurrently to a renaming.
 
-\mnnote{TODO: Ajouter une phrase sur le fait qu'effectuer un consensus est coûteux, surtout dans un système très dynamique, pour motiver la conception d'un mécanisme de renommage entièrement distribué}
-
-In our approach, we propose a fully distributed renaming mechanism, allowing any node to perform a renaming without any kind of coordination with others.
+\mnnote{TO REVIEW: Ajouter une phrase sur le fait qu'effectuer un consensus est coûteux, surtout dans un système très dynamique, pour motiver la conception d'un mécanisme de renommage entièrement distribué}
+Nonetheless, using consensuses is expensive and is not suited to all kind of application. In a fully distributed application, there is no central authority able to provide a set of stable nodes acting as the \emph{Core}. A fully distributed and efficient renaming mechanism is thus needed.
 
 \section{Proposed Approach}
 % \section{Statement explaining the approach and results, according to PhD stage: state the intended approach including a summary of work accomplished to date (if any).}
@@ -166,11 +166,12 @@ In our approach, we propose a fully distributed renaming mechanism, allowing any
 %     \item Designed a new version of LogootSplit integrating them
 % \end{itemize}
 
-\gonote{ajouter quelques mots pour donner l'idée générale de l'approche proposée: renommage des identifiants}
-
+\gonote{TO REVIEW: ajouter quelques mots pour donner l'idée générale de l'approche proposée: renommage des identifiants}
+We propose a fully distributed renaming mechanism, allowing any node to perform a renaming without any kind of coordination with others.
+The goal of such mechanism is to reassign shorter identifiers to each current element of the data structure to reduce its footprint.
 
 We define a new operation : \emph{rename}.
-This operation generates a new, equivalent state of the current sequence but with arbitrary, shorter identifiers.
+This operation generates a new, equivalent state of the current sequence but with arbitrary identifiers of minimal size.
 A map, called \emph{renamingMap}, is also generated to link each identifier from the former sequence to the corresponding identifier in the new one.
 By propagating this map, other nodes are able to apply the same renaming to their own local copy.
 
@@ -181,12 +182,15 @@ Indeed, the identifiers having changed, performing the updates would not insert 
 
 To address this issue, we designed rewriting rules for concurrent operations to a \emph{rename}.
 By using the original identifier and the \emph{renamingMap}, we are either able to find the new corresponding identifier, if it has been renamed, either able to deterministically generate a new identifier preserving the existing order, if it has been concurrently inserted.
+Upon the reception of a \emph{rename} operation, nodes can apply the same rules to compute their new local state.
 
 However, one \emph{rename} operation can be concurrent to another one.
 To solve this scenario, we give priority to one operation over the others.
 Nodes which observed and applied one of the "losing" \emph{renaming} operations have to undo its effect before applying the "winning" one.
 Thus we designed additional rewriting rules which reverse the effect of a previously applied \emph{rename} while also generating new identifiers preserving the order for identifiers generated after the renaming.
 To determine which \emph{rename} operation to proceed with, we define and use a total order between \emph{rename} operations.
+
+\mnnote{NOTE: Mentionner qu'une \emph{renamingMap} n'est utilisée que pour renommer et qu'elle peut donc être transférée en BDD à un moment ? (causal stability ou sinon simple timeout sans l'utiliser)}
 
 Based on this approach, we propose a new version of the LogootSplit algorithm implementing this renaming mechanism.
 We also introduce an optimisation to reduce the bandwidth consumption of the \emph{rename} operation by compressing the \emph{renamingMap}.
@@ -211,9 +215,9 @@ It is now in the process of being tested.
 However, testing does not ensure correctness.
 We are thus taking steps to provide a formal proof of the algorithm, either using a proof assistant either using a automatic theorem prover.
 
-\mnnote{TODO: Add introduction to explain that we need to assess the performance of the mechanism}
-
-In parallel, we are designing a benchmarker for collaborative editing tools.
+\mnnote{TO REVIEW: Add introduction to explain that we need to assess the performance of the mechanism}
+Although the renaming mechanism is bound to reduce the memory usage of the data structure over time, we need to assess that the additional computations do not degrade the overall performances of the application.
+We are thus designing a benchmarker for collaborative editing tools.
 The goal is be able to replay a collaborative editing session, from its logs, using different conflicts resolution mechanisms to compare their respective performances.
 We intend to mesure common metrics like the memory and CPU usage, bandwith consumption but also more specific metrics like the time to propagate and integrate an update and the global time required to converge.
 
