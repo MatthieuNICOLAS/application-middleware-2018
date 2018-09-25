@@ -140,7 +140,8 @@ We define a new operation : \emph{rename}.
 This operation generates a new, equivalent state of the current sequence but with arbitrary identifiers of minimal size.
 A map, called \emph{renamingMap}, is also generated to link each identifier from the former sequence to the corresponding identifier in the new one.
 By propagating this map, other nodes are able to apply the same renaming to their own local copy.
-\mnnote{NOTE: Mentionner qu'une \emph{renamingMap} n'est utilisée que pour renommer et qu'elle peut donc être transférée en BDD à un moment ? (causal stability ou sinon simple timeout sans l'utiliser)}
+\mnnote{TO REVIEW: Mentionner qu'une \emph{renamingMap} n'est utilisée que pour renommer et qu'elle peut donc être transférée en BDD à un moment ? (causal stability ou sinon simple timeout sans l'utiliser)}
+The \emph{renamingMap} is only used for renaming, it can thus be garbage collected once the corresponding \emph{rename} operation has been observed by every node.
 
 However, being a distributed system, nodes can perform updates and broadcast them while another node is performing concurrently the renaming process.
 Upon the reception of these concurrent updates, the node which triggered the renaming process cannot apply them to its copy.
