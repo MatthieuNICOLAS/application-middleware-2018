@@ -106,9 +106,16 @@ Two operations are usually defined to update the sequence:
 \emph{insert(index, element)} adds the \emph{element} at the given \emph{index}
 whereas \emph{delete(index)} removes the element at the given \emph{index}.
 
-This data type is often used in applications and, over the years, several \acp{CRDT} \cite{shapiro:inria-00177693, WeissICDCS09, AndreCollaborateCom2013} were proposed to represent replicated sequences. \mnnote{TODO: Aborder brièvement l'approche avec les tombstones (WOOT, RGA, RGASplit) et l'approche avec identifiants totalement ordonnés}
-To ensure convergence, these data structures attach an identifier to each inserted element.
+This data type is often used in applications and, over the years, several \acp{CRDT} \cite{shapiro:inria-00177693, WeissICDCS09, AndreCollaborateCom2013} were proposed to represent replicated sequences, which can be divided into two approaches.
+
+\mnnote{TO REVIEW: Aborder brièvement l'approche avec les tombstones (WOOT, RGA, RGASplit) et l'approche avec identifiants totalement ordonnés}
+The first one proposes to add to each element a timestamp and a reference to its predecessor.
+Using these data, a total order between elements can be defined.
+However this approach requires to keep tombstones for deleted elements in order to handle concurrent insertions.
+
+The second approach proposes to attach an identifier to each inserted element.
 These identifiers are used to achieve transaction-less and commutative updates by uniquely identifying each element and ordering them relatively to each others.
+We focus on this approach for the rest of this paper.
 
 The downside of this approach is the increasing size of identifiers.
 Since identifiers are used to order elements, they have to form a dense set so that nodes are always able to insert a new element between two others.
