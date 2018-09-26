@@ -65,13 +65,13 @@
 \renewcommand{\shortauthors}{M. Nicolas}
 
 \begin{abstract}
-    \mnnote{TO REVIEW: Write abstract}
-    \emph{Sequence Conflict-free Replicated Data Types} are used to replicate and edit, without any kind of coordination, sequences in distributed systems.
+    % \mnnote{TO REVIEW: Write abstract}
+    \emph{Sequence Conflict-free Replicated Data Types} allow to replicate and edit, without any kind of coordination, sequences in distributed systems.
 
     To ensure convergence, existing works from the literature add metadata to each element but they do not bound its footprint, which impedes their adoption.
     Several approaches were proposed to address this issue but they do not fit a fully distributed setting.
 
-    In this paper, we present our ongoing work on the design and validation of a fully distributed renaming mechanism, setting a bound to the footprint.
+    In this paper, we present our ongoing work on the design and validation of a fully distributed renaming mechanism, setting a bound to the metadata's footprint.
 
     Addressing this issue opens new perspectives of adoption of this technology in distributed applications.
 \end{abstract}
@@ -84,7 +84,7 @@ In order to serve an ever-growing number of users and provide an increasing volu
 large-scale systems such as data stores or collaborative editing tools adopt a distributed and replicated architecture.
 However, as stated by the CAP theorem \cite{brewer_2000_podc}, such systems cannot ensure both strong consistency and high availability in presence of network partitions.
 As a result, literature and companies increasingly adopt an optimistic replication model \cite{saito_2005_optimistic-replication} paired with the eventual consistency model to replicate data among nodes.
-This consistency model allows replicas to temporarily diverge to be able to ensure high availability, even in case of network partition.
+This consistency model allows replicas to temporarily diverge to ensure high availability, even in case of network partition.
 Each node owns a copy of the data and can modify it before propagating updates to others.
 A conflict resolution mechanism is however required to handle updates generated concurrently by different nodes.
 
@@ -116,14 +116,14 @@ whereas \emph{delete(index)} removes the element at the given \emph{index}.
 
 This data type is often used in applications and, over the years, several \acp{CRDT} \cite{shapiro:inria-00555588} were proposed to represent replicated sequences, which can be divided into two approaches.
 
-\mnnote{TO REVIEW: Aborder brièvement l'approche avec les tombstones (WOOT, RGA, RGASplit) et l'approche avec identifiants totalement ordonnés}
+% \mnnote{TO REVIEW: Aborder brièvement l'approche avec les tombstones (WOOT, RGA, RGASplit) et l'approche avec identifiants totalement ordonnés}
 The first one \cite{briot:hal-01343941} proposes to add to each element a timestamp and a reference to its predecessor.
-Using these data, a total order between elements can be defined.
-However this approach requires to keep tombstones for deleted elements in order to handle concurrent insertions.
+Using these data, a total order between elements is defined.
+However this approach requires to keep tombstones for deleted elements to handle concurrent insertions.
 
-The second approach \cite{AndreCollaborateCom2013} proposes to attach an identifier to each inserted element.
+The second approach \cite{AndreCollaborateCom2013}, on which we focus from this point, proposes to attach an identifier to each inserted element.
 These identifiers are used to achieve commutative updates by uniquely identifying each element and ordering them relatively to each other.
-We focus on this approach for the rest of this paper.
+% We focus on this approach for the rest of this paper.
 
 The downside of this approach is the increasing size of identifiers.
 Since identifiers are used to order elements, they have to form a dense set so that nodes are always able to insert a new element between two others.
@@ -135,9 +135,9 @@ Several approaches were proposed in the literature in order to address the issue
 \citet{leia:inria-00397981} propose a renaming mechanism to reduce the size of currently used identifiers, relying on a consensus algorithm.
 To prevent a system-wide consensus, authors divide the system into two tiers: the \emph{Core}, a small set of controlled and stable nodes, and the \emph{Nebula}, an uncontrolled set of nodes.
 Both can perform updates but only the members of the \emph{Core} participate in the consensus leading to a rename.
-A catch-up mechanism is provided for the \emph{Nebula} to transform the updates performed concurrently to a renaming.
+A catch-up mechanism is provided for the \emph{Nebula} to transform the updates performed concurrently.
 
-Nonetheless, using consensuses is expensive and is not suited to all kinds of applications. In a fully distributed application, there is no central authority able to provide a set of stable nodes acting as the \emph{Core}. A fully distributed and efficient renaming mechanism is thus needed.
+Nonetheless, using consensuses is expensive and not suited to all kinds of applications. In a fully distributed application, there is no central authority to provide a set of stable nodes acting as the \emph{Core}. A efficient distributed renaming mechanism is thus needed.
 
 \section{Proposed Approach}
 
@@ -148,7 +148,7 @@ We define a new operation : \emph{rename}.
 This operation generates a new, equivalent state of the current sequence but with arbitrary identifiers of minimal size.
 A map, called \emph{renamingMap}, is also generated to link each identifier from the former sequence to the corresponding identifier in the new one.
 By propagating this map, other nodes are able to apply the same renaming to their own local copy.
-\mnnote{TO REVIEW: Mentionner qu'une \emph{renamingMap} n'est utilisée que pour renommer et qu'elle peut donc être transférée en BDD à un moment ? (causal stability ou sinon simple timeout sans l'utiliser)}
+% \mnnote{TO REVIEW: Mentionner qu'une \emph{renamingMap} n'est utilisée que pour renommer et qu'elle peut donc être transférée en BDD à un moment ? (causal stability ou sinon simple timeout sans l'utiliser)}
 The \emph{renamingMap} is only used for renaming, it can thus be garbage collected once the corresponding \emph{rename} operation has been observed by every node.
 
 However, being a distributed system, nodes can perform updates and broadcast them while another node is performing concurrently the renaming process.
@@ -156,7 +156,7 @@ Upon the reception of these concurrent updates, the node which triggered the ren
 Indeed, since the identifiers have been modified, performing the updates would not insert the elements at the correct positions nor delete the correct elements.
 To address this issue, we designed rewriting rules for concurrent operations to a \emph{rename}.
 By using the original identifier and the \emph{renamingMap}, we are either able to find the new corresponding identifier, if it has been renamed, either able to deterministically generate a new identifier preserving the existing order, if it has been concurrently inserted.
-The same set of rules can be used by nodes to compute their locale state upon the reception of a \emph{rename} operation.
+The same set of rules can be used by nodes to compute their locale state upon the reception of \emph{rename} operations.
 
 However, one \emph{rename} operation can be concurrent to another one.
 To solve this scenario, we give priority to one operation over the others.
@@ -165,7 +165,7 @@ Thus we designed additional rewriting rules which reverse the effect of a previo
 To determine which \emph{rename} operation to proceed with, we define and use a total order between \emph{rename} operations.
 
 Based on this approach, we propose a new version of the LogootSplit \cite{AndreCollaborateCom2013} algorithm implementing this renaming mechanism.
-\mnnote{TO REVIEW: Présenter brièvement LogootSplit}
+% \mnnote{TO REVIEW: Présenter brièvement LogootSplit}
 LogootSplit is the state of art of Identifier-based Sequence \acp{CRDT}.
 It reduces the footprint of the data structure by aggregating elements into blocks.
 The renaming mechanism, paired to LogootSplit, allows us to reassign shorter identifiers to elements, but also to merge existing blocks into one, reducing even more the metadata used.
@@ -181,7 +181,7 @@ We are also taking steps to provide a formal specification of the algorithm and 
 Although the renaming mechanism is bound to reduce the memory usage of the data structure over time, we need to assess that the additional computations do not degrade the overall performances of the application.
 We are thus designing a benchmarker for collaborative editing tools.
 The goal is to replay a collaborative editing session, from its logs, using different conflicts resolution mechanisms to compare their respective performances.
-We intend to measure common metrics like the memory and CPU usage, bandwidth consumption but also more specific metrics like the time to propagate and integrate an update and the global time required to converge.
+We intend to measure common metrics like the memory and CPU usage, bandwidth consumption but also more specific ones like the time to propagate and integrate an update and the global time needed to converge.
 
 \section{Conclusion and Future Work}
 
