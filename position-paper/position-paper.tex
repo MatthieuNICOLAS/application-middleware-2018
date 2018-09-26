@@ -81,7 +81,7 @@
 \section{Research Statement}
 
 In order to serve an ever-growing number of users and provide an increasing volume of data,
-large scale systems such as data stores or collaborative editing tools adopt a distributed and replicated architecture.
+large-scale systems such as data stores or collaborative editing tools adopt a distributed and replicated architecture.
 However, as stated by the CAP theorem \cite{brewer_2000_podc}, such systems cannot ensure both strong consistency and high availability in presence of network partitions.
 As a result, literature and companies increasingly adopt an optimistic replication model \cite{saito_2005_optimistic-replication} paired with the eventual consistency model to replicate data among nodes.
 This consistency model allows replicas to temporarily diverge to be able to ensure high availability, even in case of network partition.
@@ -96,13 +96,13 @@ thus achieving \emph{Strong Eventual Consistency} \cite{shapiro_2011_crdt}.
 To achieve convergence, \acp{CRDT} proposed in the literature mostly rely on unique identifiers to reference updated elements.
 To generate such element identifiers, nodes often use their own identifier combined with a logical clock.
 Thus, regarding how node identifiers are generated, the size of element identifiers usually increases with the number of nodes.
-Element identifiers have also to comply to additional constraints according to the \ac{CRDT}, for instance forming a dense set in the case of a \emph{Sequence} data type.
+Element identifiers also have to comply to additional constraints according to the \ac{CRDT}, for instance forming a dense set in the case of a \emph{Sequence} data type.
 Consequently, the size of element identifiers also increases according to the number of updates performed on the data structure.
 Therefore, the size of element identifiers is usually not bounded.
 
 Since the size of identifiers attached to each element is not bounded, the overhead of the replicated data structure increases over time.
 Since nodes have to store and broadcast these identifiers, the application's performances and efficiency decrease over time.
-This severly impedes the adoption of concerned \acp{CRDT}.
+This severely impedes the adoption of concerned \acp{CRDT}.
 
 In this thesis, we aim to address this issue of the growth of identifiers for a specific category of \acp{CRDT} suffering particularly from this issue:\emph{Sequence} \acp{CRDT}.
 
@@ -122,7 +122,7 @@ Using these data, a total order between elements can be defined.
 However this approach requires to keep tombstones for deleted elements in order to handle concurrent insertions.
 
 The second approach proposes to attach an identifier to each inserted element.
-These identifiers are used to achieve transaction-less and commutative updates by uniquely identifying each element and ordering them relatively to each others.
+These identifiers are used to achieve commutative updates by uniquely identifying each element and ordering them relatively to each other.
 We focus on this approach for the rest of this paper.
 
 The downside of this approach is the increasing size of identifiers.
@@ -130,23 +130,16 @@ Since identifiers are used to order elements, they have to form a dense set so t
 However, two identifiers of the same size can be contiguous.
 When inserting a new element between two such identifiers, there is no other choice than to increase the size of the generated identifier to be able to generate one respecting the intended order. This leads to a specification of identifiers which does not bound their size.
 
-Several approaches were proposed in the literature in order to address the issue of evergrowing identifiers.
+Several approaches were proposed in the literature in order to address the issue of ever-growing identifiers.
 \citet{nedelec_2013_lseq} propose several strategies to generate identifiers and design a mechanism to switch between these strategies to limit the speed of the identifiers growth.
 \citet{leia:inria-00397981} propose a renaming mechanism to reduce the size of currently used identifiers, relying on a consensus algorithm.
 To prevent a system-wide consensus, authors divide the system into two tiers: the \emph{Core}, a small set of controlled and stable nodes, and the \emph{Nebula}, an uncontrolled set of nodes.
 Both can perform updates but only the members of the \emph{Core} participate in the consensus leading to a rename.
 A catch-up mechanism is provided for the \emph{Nebula} to transform the updates performed concurrently to a renaming.
 
-Nonetheless, using consensuses is expensive and is not suited to all kind of application. In a fully distributed application, there is no central authority able to provide a set of stable nodes acting as the \emph{Core}. A fully distributed and efficient renaming mechanism is thus needed.
+Nonetheless, using consensuses is expensive and is not suited to all kinds of applications. In a fully distributed application, there is no central authority able to provide a set of stable nodes acting as the \emph{Core}. A fully distributed and efficient renaming mechanism is thus needed.
 
 \section{Proposed Approach}
-% \section{Statement explaining the approach and results, according to PhD stage: state the intended approach including a summary of work accomplished to date (if any).}
-
-% \begin{itemize}
-%     \item Defined properties that renaming functions need to comply to (commutative with insert/delete, a rename can be undone, do not shuffle the order)
-%     \item Designed corresponding functions
-%     \item Designed a new version of LogootSplit integrating them
-% \end{itemize}
 
 We propose a fully distributed renaming mechanism, allowing any node to perform a renaming without any kind of coordination with others.
 The goal of such mechanism is to reassign shorter identifiers to each current element of the data structure to reduce its footprint.
@@ -180,15 +173,15 @@ We also introduce an optimisation to reduce the bandwidth consumption of the \em
 
 \section{Ongoing Validation}
 
-The designed renaming mechanism has been implemented in MUTE \cite{nicolas:hal-01655438}, the realtime peer-to-peer collaborative text editor developed by our research team.
+The proposed renaming mechanism has been implemented in MUTE \cite{nicolas:hal-01655438}, the real time peer-to-peer collaborative text editor developed by our research team.
 It is now in the process of being tested.
 
-We are also taking steps to provide a formal specification of the algorithm and prove its correctness, either using a proof assistant either using a automatic theorem prover.
+We are also taking steps to provide a formal specification of the algorithm and prove its correctness, either using a proof assistant either using an automatic theorem prover.
 
 Although the renaming mechanism is bound to reduce the memory usage of the data structure over time, we need to assess that the additional computations do not degrade the overall performances of the application.
 We are thus designing a benchmarker for collaborative editing tools.
 The goal is to replay a collaborative editing session, from its logs, using different conflicts resolution mechanisms to compare their respective performances.
-We intend to mesure common metrics like the memory and CPU usage, bandwith consumption but also more specific metrics like the time to propagate and integrate an update and the global time required to converge.
+We intend to measure common metrics like the memory and CPU usage, bandwidth consumption but also more specific metrics like the time to propagate and integrate an update and the global time required to converge.
 
 \section{Conclusion and Future Work}
 
