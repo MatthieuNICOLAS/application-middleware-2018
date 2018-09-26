@@ -66,14 +66,14 @@
 
 \begin{abstract}
     % \mnnote{TO REVIEW: Write abstract}
-    \emph{Sequence Conflict-free Replicated Data Types} allow to replicate and edit, without any kind of coordination, sequences in distributed systems.
+    \emph{Sequence Conflict-free Replicated Data Types (CRDTs)} allow to replicate and edit, without any kind of coordination, sequences in distributed systems.
 
     To ensure convergence, existing works from the literature add metadata to each element but they do not bound its footprint, which impedes their adoption.
     Several approaches were proposed to address this issue but they do not fit a fully distributed setting.
 
     In this paper, we present our ongoing work on the design and validation of a fully distributed renaming mechanism, setting a bound to the metadata's footprint.
 
-    Addressing this issue opens new perspectives of adoption of this technology in distributed applications.
+    Addressing this issue opens new perspectives of adoption of these CRDTs in distributed applications.
 \end{abstract}
 
 \maketitle
@@ -104,7 +104,7 @@ Since the size of identifiers attached to each element is not bounded, the overh
 Since nodes have to store and broadcast these identifiers, the application's performances and efficiency decrease over time.
 This severely impedes the adoption of concerned \acp{CRDT}.
 
-In this thesis, we aim to address this issue of the growth of identifiers for a specific category of \acp{CRDT} suffering particularly from this issue:\emph{Sequence} \acp{CRDT}.
+In this thesis, we aim to address this issue of the growth of identifiers for a specific category of \acp{CRDT} suffering particularly from this issue: \emph{Sequence} \acp{CRDT}.
 
 \section{Related Work}
 
