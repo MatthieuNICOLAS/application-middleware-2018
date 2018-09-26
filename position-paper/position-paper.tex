@@ -65,7 +65,15 @@
 \renewcommand{\shortauthors}{M. Nicolas}
 
 \begin{abstract}
-   \mnnote{TODO: Write abstract}
+    \mnnote{TO REVIEW: Write abstract}
+    \emph{Sequence Conflict-free Replicated Data Types} are used to replicate and edit, without any kind of coordination, sequences in distributed systems.
+
+    To ensure convergence, existing works from the literature add metadata to each element but they do not bound its footprint, which impedes their adoption.
+    Several approaches were proposed to address this issue but they do not fit a fully distributed setting.
+
+    In this paper, we present our ongoing work on the design and validation of a fully distributed renaming mechanism, setting a bound to the footprint.
+
+    Addressing this issue opens new perspectives of adoption of this technology in distributed applications.
 \end{abstract}
 
 \maketitle
