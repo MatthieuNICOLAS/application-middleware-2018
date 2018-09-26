@@ -178,7 +178,7 @@ It is now in the process of being tested.
 
 We are also taking steps to provide a formal specification of the algorithm and prove its correctness, either using a proof assistant either using an automatic theorem prover.
 
-Although the renaming mechanism is bound to reduce the memory usage of the data structure over time, we need to assess that the additional computations do not degrade the overall performances of the application.
+Although the renaming mechanism is bound to reduce the memory usage of the data structure over time, we need to assess that the additional computations do not degrade the overall performances.
 We are thus designing a benchmarker for collaborative editing tools.
 The goal is to replay a collaborative editing session, from its logs, using different conflicts resolution mechanisms to compare their respective performances.
 We intend to measure common metrics like the memory and CPU usage, bandwidth consumption but also more specific ones like the time to propagate and integrate an update and the global time needed to converge.
@@ -186,12 +186,15 @@ We intend to measure common metrics like the memory and CPU usage, bandwidth con
 \section{Conclusion and Future Work}
 
 The proposed renaming mechanism allows us to set a bound to the size of the identifiers.
-By bounding the size of identifiers, we open new perspectives for the adoption of concerned \acp{CRDT} in system like distributed databases.
+By bounding the size of identifiers, we open new perspectives for the adoption of concerned \acp{CRDT} in systems like distributed databases.
 
-Nonetheless, several aspects of the proposed renaming mechanism can be enhanced.
-The strategy used to determine when to trigger a renaming for example.
-New strategies could be proposed to achieve better performances, by keeping the size of identifiers low while preventing many \emph{rename} operations to be generated concurrently.
-The strategy used to determine which operation to apply in case of concurrent \emph{rename} operations could also be reworked. Smarter indicators than the total order between operations could be used to reduce the number of undo to perform globally and increase the overall performances.
+Nonetheless, we are still working on several aspects of the proposed renaming mechanism.
+The strategy used to trigger a renaming has yet to be designed and evaluated.
+It should keep the size of identifiers low while preventing many \emph{rename} operations to be generated concurrently to achieve good performances.
+We could also rework the strategy used to pick a "winning" operation from a set of concurrent \emph{rename} operations.
+The current one, defining and using a total order between these operations, can lead to cases in which nodes have to undo many \emph{rename} operations because of only one concurrent operation.
+This could provoke performance issues.
+New strategies could be proposed to reduce the likelihood of these scenarios and improve the overall performances of the system.
 
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{ref}
