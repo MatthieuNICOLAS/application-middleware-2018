@@ -166,6 +166,7 @@ Based on this approach, we propose a new version of the LogootSplit \cite{AndreC
 LogootSplit is the state of art of Identifier-based Sequence \acp{CRDT}.
 It reduces the footprint of the data structure by aggregating elements into blocks.
 The renaming mechanism, paired to LogootSplit, allows us to reassign shorter identifiers to elements, but also to merge existing blocks into one, reducing even more the metadata used.
+\footnote{For further details on the proposed approach, please read \url{https://bit.ly/2yHkdmA}}
 We also introduce an optimisation to reduce the bandwidth consumption of the \emph{rename} operation by compressing the \emph{renamingMap}.
 
 \section{Ongoing Validation}
