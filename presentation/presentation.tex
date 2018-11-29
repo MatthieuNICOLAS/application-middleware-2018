@@ -247,12 +247,16 @@
 \begin{frame}{Handling concurrent operations}
   \begin{itemize}
     \item Others can perform updates concurrently to a \emph{rename} operation
-    \item Apply them as such could lead to inconsistencies
   \end{itemize}
   \begin{figure}
-    \includegraphics[scale=0.09]{img/concurrent-insert-inconsistency.png}
+    \includegraphics[scale=0.09]{img/concurrent-insert-inconsistency-1.png}<1-1>
+    \includegraphics[scale=0.09]{img/concurrent-insert-inconsistency-2.png}<2-2>
+    \includegraphics[scale=0.09]{img/concurrent-insert-inconsistency.png}<3->
     \caption{Example of inconsistency}
   \end{figure}
+  \begin{itemize}
+    \item<3-> Apply them as such could lead to inconsistencies
+  \end{itemize}
 \end{frame}
 
 \begin{frame}{Rewriting concurrent operations}
@@ -261,7 +265,8 @@
     \item Upon reception of concurrent operations, rewrite identifiers before applying them
   \end{itemize}
   \begin{figure}
-    \includegraphics[scale=0.09]{img/concurrent-insert-rewritted.png}
+    \includegraphics[scale=0.09]{img/concurrent-insert-rewritted-1.png}<1-1>
+    \includegraphics[scale=0.09]{img/concurrent-insert-rewritted.png}<2->
     \caption{Example of rewriting}
   \end{figure}
 \end{frame}
