@@ -31,13 +31,16 @@
   \includegraphics[width=3cm]{img/inria-logo.pdf}\hspace{3em}
   \includegraphics[width=1.2cm]{img/cnrs-logo.png}
 }
+
+\setbeamertemplate{bibliography item}[text]
+
 \begin{document}
 
 \begin{frame}[t,plain]
   \maketitle
 \end{frame}
 
-\begin{frame}{\acfp{CRDT}\cite{ShapiroSSS2011}}
+\begin{frame}{\acfp{CRDT} \cite{shapiro_2011_crdt}}
   \begin{columns}
     \begin{column}{0.65\textwidth}
       \begin{tikzpicture}
@@ -83,67 +86,194 @@
       \begin{itemize}
         \item Replicated data structure
         \item<2-> Updates performed without coordination
-        \item<5-> Eventual consistency
+        \item<5-> Strong Eventual Consistency \cite{shapiro_2011_crdt}
       \end{itemize}
     \end{column}
   \end{columns}
 \end{frame}
 
-\begin{frame}{Large-scale system}
-  \begin{center}
-    \begin{tikzpicture}
-      \node (A) {\includegraphics{img/blue-node.pdf}};
-      \node[below left=0.5 and -0.2 of A] (B) {\includegraphics{img/red-node.pdf}};
-      \node[below right=0.5 and -0.2 of A] (C) {\includegraphics{img/green-node.pdf}};
+% \begin{frame}{Large-scale system}
+%   \begin{center}
+%     \begin{tikzpicture}
+%       \node (A) {\includegraphics{img/blue-node.pdf}};
+%       \node[below left=0.5 and -0.2 of A] (B) {\includegraphics{img/red-node.pdf}};
+%       \node[below right=0.5 and -0.2 of A] (C) {\includegraphics{img/green-node.pdf}};
 
-      \node[above left=0.5 and -0.2 of B] (D) {\includegraphics{img/black-node.pdf}};
-      \transparent{0.2}\node[below left=0.5 and -0.2 of D] (E) {\includegraphics{img/black-node.pdf}};
-      \transparent{1}\node[above left=0.5 and -0.2 of D] (H) {\includegraphics{img/black-node.pdf}};
-      \node[above right=0.5 and -0.2 of D] (I) {\includegraphics{img/black-node.pdf}};
+%       \node[above left=0.5 and -0.2 of B] (D) {\includegraphics{img/black-node.pdf}};
+%       \transparent{0.2}\node[below left=0.5 and -0.2 of D] (E) {\includegraphics{img/black-node.pdf}};
+%       \transparent{1}\node[above left=0.5 and -0.2 of D] (H) {\includegraphics{img/black-node.pdf}};
+%       \node[above right=0.5 and -0.2 of D] (I) {\includegraphics{img/black-node.pdf}};
 
-      \transparent{0.2}\node[above right=0.5 and -0.2 of C] (F) {\includegraphics{img/black-node.pdf}};
-      \transparent{1}\node[below right=0.5 and -0.2 of F] (G) {\includegraphics{img/black-node.pdf}};
-      \node[above right=0.5 and -0.2 of F] (J) {\includegraphics{img/black-node.pdf}};
-      \node[above left=0.5 and -0.2 of F] (K) {\includegraphics{img/black-node.pdf}};
+%       \transparent{0.2}\node[above right=0.5 and -0.2 of C] (F) {\includegraphics{img/black-node.pdf}};
+%       \transparent{1}\node[below right=0.5 and -0.2 of F] (G) {\includegraphics{img/black-node.pdf}};
+%       \node[above right=0.5 and -0.2 of F] (J) {\includegraphics{img/black-node.pdf}};
+%       \node[above left=0.5 and -0.2 of F] (K) {\includegraphics{img/black-node.pdf}};
 
-      \node[below left=0.5 and -0.2 of B] (M) {\includegraphics{img/black-node.pdf}};
-      \node[below right=0.5 and -0.2 of C] (N) {\includegraphics{img/black-node.pdf}};
+%       \node[below left=0.5 and -0.2 of B] (M) {\includegraphics{img/black-node.pdf}};
+%       \node[below right=0.5 and -0.2 of C] (N) {\includegraphics{img/black-node.pdf}};
 
-      \node[left=of E] (O) {};
-      \node[left=of H] (P) {};
+%       \node[left=of E] (O) {};
+%       \node[left=of H] (P) {};
 
-      \node[right=of G] (Q) {};
-      \node[right=of J] (R) {};
+%       \node[right=of G] (Q) {};
+%       \node[right=of J] (R) {};
 
-      \draw
-      (A) -- (B)
-      (B) -- (C)
-      (C) -- (A)
+%       \draw
+%       (A) -- (B)
+%       (B) -- (C)
+%       (C) -- (A)
 
-      (B) -- (D)
-      (D) -- (E)
-      (E) -- (M)
-      (B) -- (M)
+%       (B) -- (D)
+%       (D) -- (E)
+%       (E) -- (M)
+%       (B) -- (M)
 
-      (A) -- (I)
-      (I) -- (D)
-      (D) -- (H)
+%       (A) -- (I)
+%       (I) -- (D)
+%       (D) -- (H)
 
-      (C) -- (F)
-      (F) -- (G)
-      (G) -- (N)
-      (N) -- (C)
+%       (C) -- (F)
+%       (F) -- (G)
+%       (G) -- (N)
+%       (N) -- (C)
 
-      (A) -- (K)
-      (K) -- (F)
-      (F) -- (J)
+%       (A) -- (K)
+%       (K) -- (F)
+%       (F) -- (J)
 
-      (E) -- (O)
-      (H) -- (P)
-      (G) -- (Q)
-      (J) -- (R);
-    \end{tikzpicture}
-  \end{center}
+%       (E) -- (O)
+%       (H) -- (P)
+%       (G) -- (Q)
+%       (J) -- (R);
+%     \end{tikzpicture}
+%   \end{center}
+% \end{frame}
+
+\begin{frame}{Identifier-based \acp{CRDT}}
+  \begin{block}{Main idea}
+    \begin{itemize}
+      \item Attach an identifier to each inserted element
+    \end{itemize}
+  \end{block}
+
+  \bigskip
+
+  \begin{block}{Allow to achieve commutative updates}
+    \begin{itemize}
+      \item By identifying uniquely elements
+      \item By ordering them relatively to each other
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}{LogootSplit \cite{AndreCollaborateCom2013}}
+  \begin{itemize}
+    \item State of the art of \emph{Sequence \acp{CRDT}}
+    \item Relies on \emph{identifiers} to ensure convergence, noted here as letters and words
+    \item Elements are ordered by their identifier
+  \end{itemize}
+
+  \pause
+
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \begin{figure}
+        \includegraphics[scale=0.15]{img/helo-as-letters.png}
+        \caption{The state of a sequence which contains the elements "helo" and their corresponding identifiers}
+      \end{figure}
+    \end{column}
+    \pause
+    \begin{column}{0.5\textwidth}
+      \begin{figure}
+        \includegraphics[scale=0.15]{img/helo-as-block.png}
+        \caption{The state of a sequence which contains the block "helo"}
+      \end{figure}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Example}
+  \begin{figure}
+    \includegraphics[scale=0.09]{img/initial-state.png}<1-1>
+    \includegraphics[scale=0.09]{img/insert-world.png}<2-2>
+    \includegraphics[scale=0.09]{img/insert-split.png}<3-3>
+    \includegraphics[scale=0.09]{img/insert-l.png}<4-4>
+    \includegraphics[scale=0.09]{img/final-state.png}<5-5>
+    \caption{Example of concurrent $insert$ operations}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{Declining performances}
+  \begin{itemize}
+    \item Operations performed may lead to an inefficient internal representation
+  \end{itemize}
+  \begin{figure}
+    \includegraphics[scale=0.15]{img/worst-case.png}
+    \caption{Example of inefficient internal representation}
+  \end{figure}
+  \begin{itemize}
+    \item The more blocks we have:
+    \begin{itemize}
+      \item The more metadata we store
+      \item The longer it takes to browse the sequence to $insert$ or $delete$ an element
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[standout]
+  How to reduce the footprint of the metadata ?
+\end{frame}
+
+\begin{frame}{Renaming mechanism}
+  \begin{itemize}
+    \item Introduce a $rename$ operation
+  \end{itemize}
+  \begin{figure}
+    \includegraphics[scale=0.11]{img/renaming-0.png}<1-1>
+    \includegraphics[scale=0.11]{img/renaming-1.png}<2-2>
+    \includegraphics[scale=0.11]{img/renaming-2.png}<3-3>
+    \includegraphics[scale=0.11]{img/renaming-3.png}<4-4>
+    \includegraphics[scale=0.11]{img/renaming.png}<5-5>
+    \caption{Example of renaming}
+  \end{figure}
+  \begin{itemize}
+    \item<2-> Generates a new identifier to the first element, based on its previous identifier
+    \item<3-> Then generates contiguous identifiers for all following elements
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Conclusion}
+  \begin{itemize}
+    \item Propose a distributed renaming mechanism for \emph{LogootSplit}
+    \item Allows to reset the footprint of the \ac{CRDT} without coordination
+
+    \bigskip
+
+    \item Implemented in MUTE \cite{nicolas:hal-01655438}, our P2P collaborative text editor
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Next steps}
+
+  \begin{block}{Provide a formal proof}
+    \begin{itemize}
+      \item Need to ensure the correctness of our algorithm
+    \end{itemize}
+  \end{block}
+
+  \medskip
+
+  \begin{block}{Benchmark the mechanism}
+    \begin{itemize}
+      \item Measure its impact on the performances
+      \item Compare different strategies
+    \end{itemize}
+  \end{block}
+
+  \medskip
+
+  \begin{block}{Generalize the approach to other \acp{CRDT}}
+  \end{block}
 \end{frame}
 
 \begin{frame}[standout]
@@ -154,9 +284,10 @@
   \end{center}
 \end{frame}
 
-\begin{frame}[allowframebreaks]{References}
-  \bibliography{biblio}
+\begin{frame}[allowframebreaks]
+  \frametitle{References}
   \bibliographystyle{abbrv}
+  \bibliography{biblio}
 \end{frame}
 
 % \begin{frame}{Identifier-based \acp{CRDT}}
