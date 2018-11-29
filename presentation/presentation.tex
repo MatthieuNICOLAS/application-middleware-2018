@@ -158,6 +158,7 @@
 
   \bigskip
 
+  % TODO: Rework this block, not sure of what i was saying back then
   \begin{block}{Allow to achieve commutative updates}
     \begin{itemize}
       \item By identifying uniquely elements
@@ -233,19 +234,50 @@
     \includegraphics[scale=0.11]{img/renaming-1.png}<2-2>
     \includegraphics[scale=0.11]{img/renaming-2.png}<3-3>
     \includegraphics[scale=0.11]{img/renaming-3.png}<4-4>
-    \includegraphics[scale=0.11]{img/renaming.png}<5-5>
+    \includegraphics[scale=0.11]{img/renaming.png}<5->
     \caption{Example of renaming}
   \end{figure}
   \begin{itemize}
     \item<2-> Generates a new identifier to the first element, based on its previous identifier
     \item<3-> Then generates contiguous identifiers for all following elements
+    \item<6-> Each \emph{rename} marks the beginning of a new \emph{epoch}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Handling concurrent operations}
+  \begin{itemize}
+    \item Others can perform updates concurrently to a \emph{rename} operation
+    \item Apply them as such could lead to inconsistencies
+  \end{itemize}
+  \begin{figure}
+    \includegraphics[scale=0.09]{img/concurrent-insert-inconsistency.png}
+    \caption{Example of inconsistency}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{Rewriting concurrent operations}
+  \begin{itemize}
+    \item Define rewriting rules to transform identifiers from one \emph{epoch} to another
+    \item Upon reception of concurrent operations, rewrite identifiers before applying them
+  \end{itemize}
+  \begin{figure}
+    \includegraphics[scale=0.09]{img/concurrent-insert-rewritted.png}
+    \caption{Example of rewriting}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{Handling concurrent \emph{rename}}
+  \begin{itemize}
+    \item Define a total order between \emph{rename} operations
+    \item Pick a "winner" operation between concurrent \emph{renames}
+    \item Define additional rewriting rules to \emph{undo} the effect of "losing" ones
   \end{itemize}
 \end{frame}
 
 \begin{frame}{Conclusion}
   \begin{itemize}
-    \item Propose a distributed renaming mechanism for \emph{LogootSplit}
-    \item Allows to reset the footprint of the \ac{CRDT} without coordination
+    \item Propose a fully distributed renaming mechanism for \emph{LogootSplit}
+    \item Allows to reinitialize the footprint of the \ac{CRDT} without coordination
 
     \bigskip
 
