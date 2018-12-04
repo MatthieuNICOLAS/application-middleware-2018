@@ -175,18 +175,19 @@
     \end{itemize}
   \end{alertblock}
 
-  % TODO: Ajouter une courbe bidon représentant la taille des éléments et la taille du CRDT
+  \begin{figure}
+    \includegraphics[scale=0.22]{img/footprint.png}
+    \caption{Evolution of the footprint of the data structure}
+  \end{figure}
+\end{frame}
 
-  \begin{center}
-    \emph{How to reduce the overhead introduced by the data structure ?}
-  \end{center}
+\begin{frame}[standout]
+  \alert{How to reduce the overhead introduced by the data structure ?}
 
-  \begin{block}{Proposition}
-    \begin{itemize}
-      \item Reassign shorter identifiers in a fully distributed manner
-      \item Focus on one \ac{CRDT}
-    \end{itemize}
-  \end{block}
+  \bigskip
+  \pause
+
+  Reassign shorter identifiers in a fully distributed manner
 \end{frame}
 
 \begin{frame}{LogootSplit \cite{AndreCollaborateCom2013}}
