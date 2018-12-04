@@ -152,17 +152,39 @@
 \begin{frame}{Identifier-based \acp{CRDT}}
   \begin{block}{Main idea}
     \begin{itemize}
-      \item Attach an identifier to each inserted element
+      \item Attach an identifier to each element
     \end{itemize}
   \end{block}
 
   \bigskip
 
-  % TODO: Rework this block, not sure of what i was saying back then
-  \begin{block}{Allow to achieve commutative updates}
+  \begin{block}{Allow to design commutative updates}
     \begin{itemize}
-      \item By identifying uniquely elements
-      \item By ordering them relatively to each other
+      \item Identifying uniquely elements
+      \item Ordering updates causally
+      \item ...
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}{Research issue}
+  \begin{alertblock}{Limits}
+    \begin{itemize}
+      \item Unbounded size of identifiers
+      \item Overhead of the data structure increasing over time
+    \end{itemize}
+  \end{alertblock}
+
+  % TODO: Ajouter une courbe bidon représentant la taille des éléments et la taille du CRDT
+
+  \begin{center}
+    \emph{How to reduce the overhead introduced by the data structure ?}
+  \end{center}
+
+  \begin{block}{Proposition}
+    \begin{itemize}
+      \item Reassign shorter identifiers in a fully distributed manner
+      \item Focus on one \ac{CRDT}
     \end{itemize}
   \end{block}
 \end{frame}
@@ -170,8 +192,7 @@
 \begin{frame}{LogootSplit \cite{AndreCollaborateCom2013}}
   \begin{itemize}
     \item State of the art of \emph{Sequence \acp{CRDT}}
-    \item Relies on \emph{identifiers} to ensure convergence, noted here as letters and words
-    \item Elements are ordered by their identifier
+    \item Elements are ordered by their identifier, noted here as lowercase letters
   \end{itemize}
 
   \pause
@@ -180,14 +201,14 @@
     \begin{column}{0.5\textwidth}
       \begin{figure}
         \includegraphics[scale=0.15]{img/helo-as-letters.png}
-        \caption{The state of a sequence which contains the elements "helo" and their corresponding identifiers}
+        \caption{State of a sequence which contains the elements "helo" and their corresponding identifiers}
       \end{figure}
     \end{column}
     \pause
     \begin{column}{0.5\textwidth}
       \begin{figure}
         \includegraphics[scale=0.15]{img/helo-as-block.png}
-        \caption{The state of a sequence which contains the block "helo"}
+        \caption{State of a sequence which contains the block "helo"}
       \end{figure}
     \end{column}
   \end{columns}
@@ -206,7 +227,7 @@
 
 \begin{frame}{Declining performances}
   \begin{itemize}
-    \item Operations performed may lead to an inefficient internal representation
+    \item Updates performed may lead to an inefficient internal representation
   \end{itemize}
   \begin{figure}
     \includegraphics[scale=0.15]{img/worst-case.png}
@@ -219,10 +240,8 @@
       \item The longer it takes to browse the sequence to $insert$ or $delete$ an element
     \end{itemize}
   \end{itemize}
-\end{frame}
 
-\begin{frame}[standout]
-  How to reduce the footprint of the metadata ?
+  % TODO: Mentionner qu'on peut atténuer cette issue avec des structures de données adaptées mais que cela ne suffit pas
 \end{frame}
 
 \begin{frame}{Renaming mechanism}
@@ -230,45 +249,36 @@
     \item Introduce a $rename$ operation
   \end{itemize}
   \begin{figure}
-    \includegraphics[scale=0.11]{img/renaming-0.png}<1-1>
-    \includegraphics[scale=0.11]{img/renaming-1.png}<2-2>
-    \includegraphics[scale=0.11]{img/renaming-2.png}<3-3>
-    \includegraphics[scale=0.11]{img/renaming-3.png}<4-4>
-    \includegraphics[scale=0.11]{img/renaming.png}<5->
+    \includegraphics[scale=0.11]{img/renaming-1.png}<1-1>
+    \includegraphics[scale=0.11]{img/renaming-2.png}<2-2>
+    \includegraphics[scale=0.11]{img/renaming-3.png}<3-3>
+    \includegraphics[scale=0.11]{img/renaming-4.png}<4-4>
+    \includegraphics[scale=0.11]{img/renaming-5.png}<5->
     \caption{Example of renaming}
   \end{figure}
   \begin{itemize}
     \item<2-> Generates a new identifier to the first element, based on its previous identifier
     \item<3-> Then generates contiguous identifiers for all following elements
-    \item<6-> Each \emph{rename} marks the beginning of a new \emph{epoch}
   \end{itemize}
 \end{frame}
 
 \begin{frame}{Handling concurrent operations}
   \begin{itemize}
-    \item Others can perform updates concurrently to a \emph{rename} operation
+    \item Others may perform updates concurrently to a \emph{rename} operation
+    \item<4-> May lead to inconsistencies
   \end{itemize}
   \begin{figure}
-    \includegraphics[scale=0.09]{img/concurrent-insert-inconsistency-1.png}<1-1>
-    \includegraphics[scale=0.09]{img/concurrent-insert-inconsistency-2.png}<2-2>
-    \includegraphics[scale=0.09]{img/concurrent-insert-inconsistency.png}<3->
-    \caption{Example of inconsistency}
+    \includegraphics[scale=0.09]{img/concurrent-insert-rename-1.png}<1-1>
+    \includegraphics[scale=0.09]{img/concurrent-insert-rename-2.png}<2-2>
+    \includegraphics[scale=0.09]{img/concurrent-insert-rename-3.png}<3-3>
+    \includegraphics[scale=0.09]{img/concurrent-insert-rename-4.png}<4-4>
+    \includegraphics[scale=0.09]{img/concurrent-insert-rename-5.png}<5-5>
+    \includegraphics[scale=0.09]{img/concurrent-insert-rename-6.png}<6->
+    \caption{Example of concurrent insert}
   \end{figure}
   \begin{itemize}
-    \item<3-> Apply them as such could lead to inconsistencies
+    \item<5-> Define rewriting rules to transform identifiers from one \emph{epoch} to another
   \end{itemize}
-\end{frame}
-
-\begin{frame}{Rewriting concurrent operations}
-  \begin{itemize}
-    \item Define rewriting rules to transform identifiers from one \emph{epoch} to another
-    \item Upon reception of concurrent operations, rewrite identifiers before applying them
-  \end{itemize}
-  \begin{figure}
-    \includegraphics[scale=0.09]{img/concurrent-insert-rewritted-1.png}<1-1>
-    \includegraphics[scale=0.09]{img/concurrent-insert-rewritted.png}<2->
-    \caption{Example of rewriting}
-  \end{figure}
 \end{frame}
 
 \begin{frame}{Handling concurrent \emph{rename}}
@@ -279,37 +289,42 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Conclusion}
-  \begin{itemize}
-    \item Propose a fully distributed renaming mechanism for \emph{LogootSplit}
-    \item Allows to reinitialize the footprint of the \ac{CRDT} without coordination
+\begin{frame}{To wrap up}
 
-    \bigskip
+  \begin{block}{Done}
+    \begin{itemize}
+      \item Designed a \emph{rename} operation for LogootSplit
+      \item Defined rewriting rules to deal with concurrent updates
+    \end{itemize}
+  \end{block}
 
-    \item Implemented in MUTE \cite{nicolas:hal-01655438}, our P2P collaborative text editor
-  \end{itemize}
+  \begin{block}{Work in progress}
+    \begin{itemize}
+      \item Implementation in MUTE \cite{nicolas:hal-01655438}, our P2P collaborative text editor
+      \item Design the strategy to trigger the renaming
+    \end{itemize}
+  \end{block}
+
+  \begin{block}{To do}
+    \begin{itemize}
+      \item Prove formally the correctness of the mechanism
+      \item Benchmark its performances
+    \end{itemize}
+  \end{block}
 \end{frame}
 
 \begin{frame}{Next steps}
 
-  \begin{block}{Provide a formal proof}
+  \begin{block}{Generalize the approach}
     \begin{itemize}
-      \item Need to ensure the correctness of our algorithm
+      \item To other Sequence \acp{CRDT}
+      \item To other types
+      \begin{itemize}
+        \item Counter
+        \item Set
+        \item ...
+      \end{itemize}
     \end{itemize}
-  \end{block}
-
-  \medskip
-
-  \begin{block}{Benchmark the mechanism}
-    \begin{itemize}
-      \item Measure its impact on the performances
-      \item Compare different strategies
-    \end{itemize}
-  \end{block}
-
-  \medskip
-
-  \begin{block}{Generalize the approach to other \acp{CRDT}}
   \end{block}
 \end{frame}
 
