@@ -17,7 +17,7 @@
 \acrodefplural{CRDT}[CRDTs]{Conflict-free Replicated Data Types}
 
 \author{
-  Matthieu Nicolas
+  Matthieu Nicolas (\url{matthieu.nicolas@inria.fr})
   \\
   COAST team
   \\
@@ -32,7 +32,15 @@
   \includegraphics[width=1.2cm]{img/cnrs-logo.png}
 }
 
-\setbeamertemplate{bibliography item}[text]
+\usepackage[backend=biber,defernumbers=true,style=trad-plain,sorting=ydnt,maxbibnames=1,maxcitenames=1]{biblatex}
+\addbibresource{biblio.bib}
+\AtBeginBibliography{\footnotesize}
+\setbeamertemplate{bibliography item}[text] % use ref number in bibliography
+
+\renewcommand{\thefootnote}{[\arabic{footnote}]}
+
+\usepackage{silence}
+\WarningFilter{biblatex}{Patching footnotes failed}
 
 \begin{document}
 
@@ -40,53 +48,61 @@
   \maketitle
 \end{frame}
 
-\begin{frame}{\acfp{CRDT} \cite{shapiro_2011_crdt}}
+\begin{frame}{\acfp{CRDT} \footfullcite{shapiro_2011_crdt}}
   \begin{columns}
     \begin{column}{0.65\textwidth}
       \begin{tikzpicture}
 
         \node (A) at (0, 0) {\includegraphics{img/blue-node.pdf}};
         \node[below=3pt of A] {\textbf{A}};
-        \node<1>[above=3pt of A] {\includegraphics[scale=0.6]{img/doc.pdf}};
-        \node<2-4>[above=3pt of A] {\includegraphics[scale=0.6]{img/docA.pdf}};
-        \node<5->[above=3pt of A] {\includegraphics[scale=0.6]{img/docABC.pdf}};
+        \node<1>[above=3pt of A] {\includegraphics[scale=0.5]{img/doc.pdf}};
+        \node<2-4>[above=3pt of A] {\includegraphics[scale=0.5]{img/docA.pdf}};
+        \node<5->[above=3pt of A] {\includegraphics[scale=0.5]{img/docABC.pdf}};
 
         \node (B) at (-2, -3) {\includegraphics{img/red-node.pdf}};
         \node[below=3pt of B] {\textbf{B}};
-        \node<1-2>[left=3pt of B] {\includegraphics[scale=0.6]{img/doc.pdf}};
-        \node<3>[left=3pt of B] {\includegraphics[scale=0.6]{img/docA.pdf}};
-        \node<4>[left=3pt of B] {\includegraphics[scale=0.6]{img/docAB.pdf}};
-        \node<5->[left=3pt of B] {\includegraphics[scale=0.6]{img/docABC.pdf}};
+        \node<1-2>[left=3pt of B] {\includegraphics[scale=0.5]{img/doc.pdf}};
+        \node<3>[left=3pt of B] {\includegraphics[scale=0.5]{img/docA.pdf}};
+        \node<4>[left=3pt of B] {\includegraphics[scale=0.5]{img/docAB.pdf}};
+        \node<5->[left=3pt of B] {\includegraphics[scale=0.5]{img/docABC.pdf}};
 
-        \transparent{0.2}
+        \transparent{0.4}
           \node<-4> (C) at (2, -3) {\includegraphics{img/green-node.pdf}};
-          \node<1-3>[right=3pt of C] {\includegraphics[scale=0.6]{img/doc.pdf}};
+          \node<1-3>[right=3pt of C] {\includegraphics[scale=0.5]{img/doc.pdf}};
         \transparent{1}
         \node<4-> at (2, -3) {\includegraphics{img/green-node.pdf}};
-        \node<4>[right=3pt of C] {\includegraphics[scale=0.6]{img/docC.pdf}};
+        \node<4>[right=3pt of C] {\includegraphics[scale=0.5]{img/docC.pdf}};
         \node[below=3pt of C] {\textbf{C}};
-        \node<5->[right=3pt of C] {\includegraphics[scale=0.6]{img/docABC.pdf}};
+        \node<5->[right=3pt of C] {\includegraphics[scale=0.5]{img/docABC.pdf}};
 
-        \draw[shorten >=3pt, shorten <=3pt]
+        \draw<1,3,5>[shorten >=3pt, shorten <=3pt]
           (A) to[bend right] (B)
           (B) to[bend right] (C)
           (C) to[bend right] (A);
 
+        \draw<2>[shorten >=3pt, shorten <=3pt, ->] (A) to[bend right] (B);
+        \draw<2>[shorten >=3pt, shorten <=3pt, <-] (C) to[bend right] (A);
+        \draw<2>[shorten >=3pt, shorten <=3pt] (B) to[bend right] (C);
+
+        \draw<4>[shorten >=3pt, shorten <=3pt, <-] (A) to[bend right] (B);
+        \draw<4>[shorten >=3pt, shorten <=3pt, <->] (B) to[bend right] (C);
+        \draw<4>[shorten >=3pt, shorten <=3pt, <-] (C) to[bend right] (A);
+
         \node<2>[below left=-30pt and 5pt of A] {\includegraphics[scale=0.4]{img/blue-update.pdf}};
         \node<2, 4>[below right=-30pt and 5pt of A] {\includegraphics[scale=0.4]{img/blue-update.pdf}};
 
-        \node<4>[below right=-4pt and 1pt of B] {\includegraphics[scale=0.6]{img/red-update.pdf}};
-        \node<4>[above left=1pt and -15pt of B] {\includegraphics[scale=0.6]{img/red-update.pdf}};
+        \node<4>[below right=-4pt and 1pt of B] {\includegraphics[scale=0.5]{img/red-update.pdf}};
+        \node<4>[above left=1pt and -15pt of B] {\includegraphics[scale=0.5]{img/red-update.pdf}};
 
-        \node<4>[below left=-4pt and 1pt of C] {\includegraphics[scale=0.6]{img/green-update.pdf}};
-        \node<4>[above right=1pt and -15pt of C] {\includegraphics[scale=0.6]{img/green-update.pdf}};
+        \node<4>[below left=-4pt and 1pt of C] {\includegraphics[scale=0.5]{img/green-update.pdf}};
+        \node<4>[above right=1pt and -15pt of C] {\includegraphics[scale=0.5]{img/green-update.pdf}};
       \end{tikzpicture}
     \end{column}
     \begin{column}{0.35\textwidth}
       \begin{itemize}
         \item Replicated data structure
         \item<2-> Updates performed without coordination
-        \item<5-> Strong Eventual Consistency \cite{shapiro_2011_crdt}
+        \item<5-> Strong Eventual Consistency
       \end{itemize}
     \end{column}
   \end{columns}
@@ -190,7 +206,7 @@
   Reassign shorter identifiers in a fully distributed manner
 \end{frame}
 
-\begin{frame}{LogootSplit \cite{AndreCollaborateCom2013}}
+\begin{frame}{LogootSplit \footfullcite{AndreCollaborateCom2013}}
   \begin{itemize}
     \item State of the art of \emph{Sequence \acp{CRDT}}
     \item Elements are ordered by their identifier, noted here as lowercase letters
@@ -269,25 +285,29 @@
     \item<4-> May lead to inconsistencies
   \end{itemize}
   \begin{figure}
-    \includegraphics[scale=0.09]{img/concurrent-insert-rename-1.png}<1-1>
-    \includegraphics[scale=0.09]{img/concurrent-insert-rename-2.png}<2-2>
-    \includegraphics[scale=0.09]{img/concurrent-insert-rename-3.png}<3-3>
-    \includegraphics[scale=0.09]{img/concurrent-insert-rename-4.png}<4-4>
-    \includegraphics[scale=0.09]{img/concurrent-insert-rename-5.png}<5-5>
-    \includegraphics[scale=0.09]{img/concurrent-insert-rename-6.png}<6->
+    \includegraphics[scale=0.08]{img/concurrent-insert-rename-1.png}<1-1>
+    \includegraphics[scale=0.08]{img/concurrent-insert-rename-2.png}<2-2>
+    \includegraphics[scale=0.08]{img/concurrent-insert-rename-3.png}<3-3>
+    \includegraphics[scale=0.08]{img/concurrent-insert-rename-4.png}<4-4>
+    \includegraphics[scale=0.08]{img/concurrent-insert-rename-5.png}<5-5>
+    \includegraphics[scale=0.08]{img/concurrent-insert-rename-6.png}<6->
     \caption{Example of concurrent insert}
   \end{figure}
   \begin{itemize}
-    \item<5-> Define rewriting rules to transform identifiers from one \emph{epoch} to another
+    \item<5-> Track \emph{epoch} of generation of operations
+    \item<6-> Define rewriting rules to transform identifiers from one \emph{epoch} to another
   \end{itemize}
 \end{frame}
 
 \begin{frame}{Handling concurrent \emph{rename}}
-  \begin{itemize}
-    \item Define a total order between \emph{rename} operations
-    \item Pick a "winner" operation between concurrent \emph{renames}
-    \item Define additional rewriting rules to \emph{undo} the effect of "losing" ones
-  \end{itemize}
+
+  \begin{block}{\alert{\emph{rename} operation not commutative}}
+    \begin{itemize}
+      \item Define a total order between \emph{rename} operations
+      \item Pick a "winner" operation between concurrent \emph{renames}
+      \item Define additional rewriting rules to \emph{undo} the effect of "losing" ones
+    \end{itemize}
+  \end{block}
 \end{frame}
 
 \begin{frame}{To wrap up}
@@ -299,12 +319,16 @@
     \end{itemize}
   \end{block}
 
+  \pause
+
   \begin{block}{Work in progress}
     \begin{itemize}
-      \item Implementation in MUTE \cite{nicolas:hal-01655438}, our P2P collaborative text editor
-      \item Design the strategy to trigger the renaming
+      \item Implementing in MUTE \footfullcite{nicolas:hal-01655438}, our P2P collaborative text editor
+      \item Designing the strategy to trigger the renaming
     \end{itemize}
   \end{block}
+
+  \pause
 
   \begin{block}{To do}
     \begin{itemize}
@@ -318,8 +342,8 @@
 
   \begin{block}{Generalize the approach}
     \begin{itemize}
-      \item To other Sequence \acp{CRDT}
-      \item To other types
+      \item<2-> To other Sequence \acp{CRDT}
+      \item<3-> To other types
       \begin{itemize}
         \item Counter
         \item Set
@@ -335,12 +359,6 @@
   \begin{center}
     \ccby
   \end{center}
-\end{frame}
-
-\begin{frame}[allowframebreaks]
-  \frametitle{References}
-  \bibliographystyle{abbrv}
-  \bibliography{biblio}
 \end{frame}
 
 % \begin{frame}{Identifier-based \acp{CRDT}}
