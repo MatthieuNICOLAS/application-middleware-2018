@@ -24,6 +24,7 @@
   \textbf{Supervised by} Gérald Oster and Olivier Perrin
 }
 \title{Efficient renaming in \acp{CRDT}}
+\subtitle{Case Study of a Sequence CRDT : LogootSplit}
 \institute{
   \vspace{3em}
   \includegraphics[width=2.8cm]{img/loria-logo.png}\hspace{3em}
@@ -75,18 +76,10 @@
         \node[below=3pt of C] {\textbf{C}};
         \node<5->[right=3pt of C] {\includegraphics[scale=0.5]{img/docABC.pdf}};
 
-        \draw<1,3,5>[shorten >=3pt, shorten <=3pt]
+        \draw[shorten >=3pt, shorten <=3pt]
           (A) to[bend right] (B)
           (B) to[bend right] (C)
           (C) to[bend right] (A);
-
-        \draw<2>[shorten >=3pt, shorten <=3pt, ->] (A) to[bend right] (B);
-        \draw<2>[shorten >=3pt, shorten <=3pt, <-] (C) to[bend right] (A);
-        \draw<2>[shorten >=3pt, shorten <=3pt] (B) to[bend right] (C);
-
-        \draw<4>[shorten >=3pt, shorten <=3pt, <-] (A) to[bend right] (B);
-        \draw<4>[shorten >=3pt, shorten <=3pt, <->] (B) to[bend right] (C);
-        \draw<4>[shorten >=3pt, shorten <=3pt, <-] (C) to[bend right] (A);
 
         \node<2>[below left=-30pt and 5pt of A] {\includegraphics[scale=0.4]{img/blue-update.pdf}};
         \node<2, 4>[below right=-30pt and 5pt of A] {\includegraphics[scale=0.4]{img/blue-update.pdf}};
@@ -264,6 +257,7 @@
 \begin{frame}{Renaming mechanism}
   \begin{itemize}
     \item Introduce a $rename$ operation
+    \item Can be perform without coordination
   \end{itemize}
   \begin{figure}
     \includegraphics[scale=0.11]{img/renaming-1.png}<1-1>
@@ -294,14 +288,21 @@
     \caption{Example of concurrent insert}
   \end{figure}
   \begin{itemize}
-    \item<5-> Track \emph{epoch} of generation of operations
+    \item<5-> Use \emph{epoch-based} system to track concurrent operations
     \item<6-> Define rewriting rules to transform identifiers from one \emph{epoch} to another
   \end{itemize}
+\end{frame}
+
+\begin{frame}[standout]
+  What about concurrent \emph{rename} operations ?
 \end{frame}
 
 \begin{frame}{Handling concurrent \emph{rename}}
 
   \begin{block}{\alert{\emph{rename} operation not commutative}}
+
+    \pause
+
     \begin{itemize}
       \item Define a total order between \emph{rename} operations
       \item Pick a "winner" operation between concurrent \emph{renames}
@@ -333,17 +334,22 @@
   \begin{block}{To do}
     \begin{itemize}
       \item Prove formally the correctness of the mechanism
-      \item Benchmark its performances
+      \item Benchmark its performances (Memory, CPU, Bandwidth,...)
     \end{itemize}
   \end{block}
 \end{frame}
 
-\begin{frame}{Next steps}
+\begin{frame}{Perspectives}
+
+  \begin{block}{Propose a smarter strategy to choose the "winning" renaming}
+  \end{block}
+
+  \pause
 
   \begin{block}{Generalize the approach}
     \begin{itemize}
-      \item<2-> To other Sequence \acp{CRDT}
-      \item<3-> To other types
+      \item To other Sequence \acp{CRDT}
+      \item To other types
       \begin{itemize}
         \item Counter
         \item Set
@@ -359,6 +365,44 @@
   \begin{center}
     \ccby
   \end{center}
+\end{frame}
+
+\begin{frame}{LogootSplit identifiers}
+  \begin{itemize}
+    \item To comply with these constraints, LogootSplit proposes identifiers composed of quadruplets of integers of the following form:
+  \end{itemize}
+  \begin{center}
+    $<priority, siteId, seq, offset>$
+  \end{center}
+  \begin{itemize}
+    \item \emph{priority} allows to determine the position of this identifier compared to others
+    \item \emph{siteId} refers to the node's identifier, assumed to be unique
+    \item \emph{seq} refers to the node's logical clock, which increases monotonically with local operations
+    \item \emph{offset} refers to the element position in its original block
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Identifier constraints}
+
+  \begin{itemize}
+    \item To fulfill their role, identifiers have to comply to several constraints:
+  \end{itemize}
+
+  \begin{block}{Globally unique}
+    \begin{itemize}
+      \item Identifiers should never be generated twice, neither by different users nor by the same one at different times
+    \end{itemize}
+  \end{block}
+  \begin{block}{Totally ordered}
+    \begin{itemize}
+      \item We should always be able to compare and order two elements using their identifiers
+    \end{itemize}
+  \end{block}
+  \begin{block}{Dense set}
+    \begin{itemize}
+      \item We should always be able to add a new element, and thus a new identifier, between two others
+    \end{itemize}
+  \end{block}
 \end{frame}
 
 % \begin{frame}{Identifier-based \acp{CRDT}}
